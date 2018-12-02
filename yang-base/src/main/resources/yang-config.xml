@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yang-config>
+    <base-config>
+        <oscp-resolve>true</oscp-resolve>
+        <collection-use>set</collection-use>
+        <oscp-unitbean>false</oscp-unitbean>
+        <reserved-package></reserved-package>
+        <java-doc>false</java-doc>
+    </base-config>
+    <transaction-config>
+        <module name="com.zte.sdn.oscp.gen.Network">
+            <enable>true</enable>
+            <!--存储类型（本地存储、分布式存储）-->
+            <type>distribute</type>
+            <!--一致性（强、最终eventually）-->
+            <consistency>eventual</consistency>
+            <!--隔离性（读已提交和可重复读）-->
+            <isolation>read-committed</isolation>
+            <!--是否持久化-->
+            <durable>true</durable>
+        </module>
+    </transaction-config>
+    <conflict-config>
+        <hyphen-replace></hyphen-replace>
+        <period-replace></period-replace>
+        <underscore-replace></underscore-replace>
+        <yang-identify-prefix>
+            <java-key-prefix>oscpYangPrefix</java-key-prefix>
+        </yang-identify-prefix>
+    </conflict-config>
+    <mapping-config>
+        <map attrIn="odl" attrOut="oscp"/>
+    </mapping-config>
+</yang-config>

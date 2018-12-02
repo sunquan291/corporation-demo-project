@@ -1,0 +1,17 @@
+module device {
+    yang-version 1;
+    namespace "ip.device";
+    prefix "t6";
+    organization "ON-LAB";
+
+    revision "2017-05-15" {
+       description "Initial revision.";
+    }
+    leaf manufacturer {
+        type uint32;
+        must "manufacturer=20"
+        {
+            error-message "an error sunquan.";
+        }
+    }
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
+           odl:use-default-for-reference-types="true" default-timeout="4">
+
+    <!--<command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.1.0">-->
+        <!--<command>-->
+            <!--<action class="com.zte.sdn.oscp.yang.adapter.AdapterCommandX"/>-->
+        <!--</command>-->
+        <!--<command>-->
+            <!--<action class="com.zte.sdn.oscp.yang.adapter.ExampleCommand"/>-->
+        <!--</command>-->
+    <!--</command-bundle>-->
+    <!--<bean id="fooRpcService" class="com.zte.sdn.oscp.yang.adapter.Activator"></bean>-->
+    <!--<odl:rpc-implementation ref="fooRpcService"/>-->
+    <service activation="lazy"></service>
+    <odl:sq-print value="hello,world"></odl:sq-print>
+    <bean></bean>
+</blueprint>

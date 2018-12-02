@@ -1,0 +1,7 @@
+================Information for path============
+{nodeType=GROUPING_NODE,name=endpoint, parent=device, nextSibling=system}
+{nodeType=CONTAINER_NODE,name=system, parent=device, child=endpoint, previousSibling=endpoint}
+{nodeType=USES_NODE,name=endpoint, parent=system}
+{nodeType=USES_NODE,name=endpoint, parent=system}
+{nodeType=CONTAINER_NODE,name=system, parent=device, child=endpoint, previousSibling=endpoint}
+{nodeType=MODULE_NODE,name=device, child=endpoint}

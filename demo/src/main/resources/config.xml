@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<properties>
+    <property name="default-topic" value="default">
+        <country>China1</country>
+        <num>10</num>
+    </property>
+    <property name="default-group" value="default">
+        <country>Japan</country>
+        <num>20</num>
+    </property>
+</properties>

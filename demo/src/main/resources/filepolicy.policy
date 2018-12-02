@@ -1,0 +1,4 @@
+grant{
+    permission java.io.FilePermission "<<ALL FILES>>","read";
+    permission com.zte.sunquan.demo.security.AppPermission "balance","get";
+};

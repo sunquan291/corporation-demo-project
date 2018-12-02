@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<projections>
+    <topic name="default">
+        <group name="default" extends="">
+            <projection api="com.zte.sunquan.demo.actor.linecount.ActorMain"
+                        impl="com.zte.sunquan.demo.actor.linecount.ActorMain"/>
+        </group>
+        <group name="property-subroot" extends="">
+            <projection api="com.zte.sunquan.demo.actor.linecount.ActorMain"
+                        impl="com.zte.sunquan.demo.actor.linecount.ActorMain"/>
+        </group>
+        <group>
+            <projection api="com.zte.sdn.oscp.core.net.root.NetworkRoot"
+                        impl="com.zte.sdn.oscp.core.net.root.DefaultNetworkRoot"/>
+        </group>
+    </topic>
+</projections>

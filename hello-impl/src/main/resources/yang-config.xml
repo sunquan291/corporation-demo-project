@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yang-config>
+    <base-config>
+        <oscp-resolve>true</oscp-resolve>
+        <collection-use>Set</collection-use>
+        <oscp-unitbean>false</oscp-unitbean>
+        <reserved-package></reserved-package>
+    </base-config>
+    <conflict-config>
+        <hyphen-replace></hyphen-replace>
+        <period-replace></period-replace>
+        <underscore-replace></underscore-replace>
+        <yang-identify-prefix>
+            <java-key-prefix>oscpYangPrefix</java-key-prefix>
+        </yang-identify-prefix>
+    </conflict-config>
+    <mapping-config>
+        <map attrIn="odl" attrOut="oscp"/>
+    </mapping-config>
+</yang-config>

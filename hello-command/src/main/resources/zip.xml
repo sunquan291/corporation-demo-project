@@ -1,0 +1,24 @@
+<assembly>
+    <id>release</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>target\classes</directory>
+            <!-- 过滤 -->
+            <excludes>
+                <exclude>*.xml</exclude>
+            </excludes>
+            <outputDirectory>\</outputDirectory>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>true</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory><!-- 将scope为runtime的依赖包打包到lib目录下。 -->
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+</assembly>

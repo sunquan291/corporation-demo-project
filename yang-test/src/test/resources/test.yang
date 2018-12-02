@@ -1,0 +1,14 @@
+module test {
+
+    yang-version 1;
+    namespace "ydt.test";
+    prefix "t6";
+    organization "ON-LAB";
+
+    revision "2016-05-24" {
+        description "Initial revision.";
+    }
+    leaf leaf10 {
+       type empty;
+    }
+}

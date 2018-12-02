@@ -1,0 +1,31 @@
+module network {
+
+    yang-version 1;
+    namespace "ip.device";
+    prefix "t6";
+    import sub-net
+        {
+            prefix "sn";
+        }
+    revision "2017-03-24" {
+       description "Initial revision.";
+    }
+    uses sn:arp-packet-fields;
+    leaf manufacturer {
+       type sn:my;
+       mandatory true;
+    }
+    leaf hwVersion {
+       type string;
+    }
+    leaf swVersion {
+       type string;
+    }
+    leaf serialNumber {
+       type string;
+    }
+    leaf ip {
+       type string;
+       default "127.0.0.0";
+    }
+}

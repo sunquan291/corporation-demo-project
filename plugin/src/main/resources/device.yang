@@ -1,0 +1,16 @@
+module device {
+
+    yang-version 1;
+    namespace "ip.device";
+    prefix "t6";
+    organization "ON-LAB";
+
+    revision "2017-03-24" {
+       description "Initial revision.";
+    }
+
+    leaf username{
+        type string;
+    }
+
+}

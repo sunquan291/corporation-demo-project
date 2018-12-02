@@ -1,0 +1,45 @@
+module device {
+
+    yang-version 1;
+    namespace "ip.device";
+    prefix "t6";
+    organization "ON-LAB";
+
+    revision "2016-05-24" {
+       description "Initial revision.";
+    }
+    leaf manufacturer {
+       type string;
+    }
+    leaf hwVersion {
+       type string;
+    }
+    leaf swVersion {
+       type string;
+    }
+    leaf serialNumber {
+       type string;
+    }
+    leaf ip {
+       type string;
+    }
+    leaf-list flows {
+       type string;
+    }
+    list connect-point {
+       key "network-id";
+       leaf network-id {
+         type string;
+       }
+   }
+   container system {
+            container login {
+                leaf message {
+                    type string;
+                    description
+                        "Message given at start of login session";
+                }
+           }
+       }
+
+}

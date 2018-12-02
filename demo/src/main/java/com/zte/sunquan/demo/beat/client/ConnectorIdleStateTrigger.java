@@ -1,0 +1,34 @@
+package com.zte.sunquan.demo.beat.client;
+
+/**
+ * Created by 10184538 on 2018/1/15.
+ */
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.CharsetUtil;
+
+@Sharable
+public class ConnectorIdleStateTrigger extends ChannelInboundHandlerAdapter {
+
+    private static final ByteBuf HEARTBEAT_SEQUENCE = Unpooled.unreleasableBuffer(Unpooled.copiedBuffer("Heartbeat",
+            CharsetUtil.UTF_8));
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            IdleState state = ((IdleStateEvent) evt).state();
+            if (state == IdleState.WRITER_IDLE) {
+                // write heartbeat to server
+                ctx.writeAndFlush(HEARTBEAT_SEQUENCE.duplicate());
+            }
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
+    }
+}

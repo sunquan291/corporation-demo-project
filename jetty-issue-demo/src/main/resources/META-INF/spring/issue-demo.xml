@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:cxfcore="http://cxf.apache.org/core"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:sec="http://cxf.apache.org/configuration/security"
+       xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration"
+
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+         http://camel.apache.org/schema/cxf            http://camel.apache.org/schema/cxf/camel-cxf.xsd
+         http://cxf.apache.org/core                    http://cxf.apache.org/schemas/core.xsd
+         http://cxf.apache.org/configuration/security  http://cxf.apache.org/schemas/configuration/security.xsd
+         http://cxf.apache.org/jaxrs                    http://cxf.apache.org/schemas/jaxrs.xsd
+         http://cxf.apache.org/transports/http-jetty/configuration   http://cxf.apache.org/schemas/configuration/http-jetty.xsd
+	">
+
+
+    <!-- Profile Configuration Options : ESB GENERIC  -->
+    <!-- 
+    <osgix:cm-properties id="fabric-profile" persistent-id="conf.esb">
+        <prop key="ssl.keystore">/home/wuxiaohui/ssl/keystore.jks</prop>
+        <prop key="ssl.password">changeit</prop>
+        <prop key="ssl.keyPassword">changeit</prop>
+        <prop key="ssl.truststore">/home/wuxiaohui/ssl/cacerts</prop>
+        <prop key="ssl.trustPassword">changeit</prop>
+    </osgix:cm-properties>
+ -->
+    <!-- Registering a bean to combine profile config with the global config service (not implemented yet) -->   
+    <!-- 
+     <bean id="propsAggregator" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="propertiesArray">
+            <array>
+
+                <ref bean="global-config-profile"/>
+
+                <ref bean="fabric-profile"/>
+            </array>
+        </property>
+    </bean>
+ -->  
+
+
+    <!-- CAMEL CXF HTTPS : 9292                          -->
+
+    <cxfcore:bus bus="generic-bus"/>
+
+    <httpj:engine-factory bus="generic-bus">
+        <httpj:engine port="9292">
+            <httpj:tlsServerParameters>
+                <sec:keyManagers keyPassword="changeit">
+                    <sec:keyStore file="./ssl/keystore.jks" password="changeit" type="JKS"/>
+                </sec:keyManagers>
+                <sec:trustManagers>
+                    <sec:keyStore file="./ssl/cacerts" password="changeit" type="JKS"/>
+                </sec:trustManagers>
+                <sec:cipherSuitesFilter>
+                    <sec:include>.*_WITH_3DES_.*</sec:include>
+                    <sec:include>.*_WITH_DES_.*</sec:include>
+                    <sec:exclude>.*_WITH_NULL_.*</sec:exclude>
+                    <sec:exclude>.*_DH_anon_.*</sec:exclude>
+                </sec:cipherSuitesFilter>
+                <sec:clientAuthentication want="false" required="false"/>
+            </httpj:tlsServerParameters>
+        </httpj:engine>
+    </httpj:engine-factory>
+
+    <!-- CXF endpoint                           -->
+    <cxf:rsServer id="rsServer" address="https://localhost:9292/demo" staticSubresourceResolution="true"
+                  serviceClass="esb.jetty.IssueDemo"
+                  loggingFeatureEnabled="false" loggingSizeLimit="20" skipFaultLogging="false">
+        <cxf:providers>
+        <ref bean="authorizationFilter"/>
+        <!-- 
+            <ref bean="authenticationFilter"/>
+            <ref bean="authorizationFilter"/>
+             -->
+        </cxf:providers>
+    </cxf:rsServer>
+
+    <!-- CXF Authentication : hooks up a JAAS realm  -->
+    <bean id="authenticationFilter"
+          class="org.apache.cxf.jaxrs.security.JAASAuthenticationFilter">
+        <!-- JAAS realm name -->
+        <property name="contextName" value="karaf"/>
+        <property name="roleClassifierType" value="classname"/>
+        <property name="roleClassifier" value="RolePrincipal"/>
+    </bean>
+
+    <!-- CXF Authorization : JAAS roles          -->
+    <!-- 
+    <bean id="authorizationFilter" class="org.apache.cxf.jaxrs.security.SimpleAuthorizingFilter">
+        <property name="interceptor" ref="authorizationInterceptor"/>
+    </bean>
+
+    <bean id="authorizationInterceptor" class="org.apache.cxf.interceptor.security.SimpleAuthorizingInterceptor">
+        <property name="globalRoles" value="admin"/>
+    </bean>
+ -->
+<bean id="authorizationFilter" class="org.apache.cxf.interceptor.security.SimpleAuthorizingInterceptor">
+      <!-- its possible to define global roles that apply to all WSDL operations not listed above -->
+   <property name="globalRoles" value="admin"/>
+</bean>
+<!--  
+<util:map id="rolesMap">
+    <entry key="admin" value="admin"/>
+    <entry key="getBook" value="ROLE_BOOK_OWNER"/>
+</util:map>
+ -->  
+    <!-- ====================================== -->
+    <!-- Camel Context                          -->
+    <camelContext id="DEMO-JETTY-LOG" xmlns="http://camel.apache.org/schema/spring">
+
+
+ 
+        <dataFormats>
+            <json id="json" library="Jackson"/>
+        </dataFormats>
+
+        <!-- Central Error Handler -->
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <handled>
+                <constant>true</constant>
+            </handled>
+            <to uri="direct:taraErrorHandler"/>
+        </onException>
+
+
+        <route id="TARA REST">
+            <from uri="cxfrs:bean:rsServer?bindingStyle=SimpleConsumer"/>
+
+            <log message="USER : $simple{in.header.username}. REQUEST : $simple{in.header.projectCode}"
+                 loggingLevel="INFO" logName="DEMO-JETTY-LOG"/>
+
+            <setBody>
+                <groovy>
+                    <![CDATA[
+
+                    //delaying the response 
+                    Thread.sleep(120000);
+
+                    // Defining the new root structure of the response body
+                    def body = new LinkedHashMap()
+
+                    def meta = new LinkedHashMap()
+                    meta.put("status",true)
+
+                    body.put("meta",meta)
+
+                    def data = new LinkedList<LinkedHashMap>()
+                    for ( i in 0..3000 ) {
+                        def row = new LinkedHashMap()
+                        row.put("rownum",i)
+                        row.put("text default","textline "+i)
+                        row.put("text descrption 2","textline2 "+i)
+                        row.put("text descrption 3","textline3 "+i)
+                        row.put("text descrption 4","textline4 "+i)
+                        row.put("text descrption 5","textline5 "+i)
+                        data.add(row) 
+                    }
+
+                    body.put("data",data)
+
+                    // returning the newly constructed body
+                    body
+                    ]]>
+                </groovy>
+            </setBody>
+
+            <removeHeaders pattern="*"/>
+ 
+            <marshal ref="json"/>
+
+            <setHeader headerName="Content-Length">
+                <mvel>getRequest().getBody().length</mvel>
+            </setHeader>
+
+            <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+                <constant>200</constant>
+            </setHeader>
+
+            <setHeader headerName="Exchange.CONTENT_TYPE">
+                <constant>application/json</constant>
+            </setHeader>
+        </route>
+
+        <!-- Error handler -->
+        <route id="REST ERROR HANDLER">
+            <from uri="direct:errorHandler"/>
+
+            <removeHeader headerName="Authorization"/>
+
+            <to uri="log:DEMO-JETTY-LOG?level=ERROR&amp;showAll=true"/>
+
+            <setHeader headerName="ERROR_ID">
+                <groovy>
+                    exchange.exchangeId.replaceFirst("ID-(.*?)-","")
+                </groovy>
+            </setHeader>
+
+            <setBody>
+                <simple>
+                    {"status":false,
+                     "errorId":"${headers.ERROR_ID}",
+                     "errorDescription": "Notify admins"}
+                </simple>
+            </setBody>
+
+            <removeHeaders pattern="*"/>
+
+            <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+                <constant>406</constant>
+            </setHeader>
+
+            <setHeader headerName="Exchange.CONTENT_TYPE">
+                <constant>application/json</constant>
+            </setHeader>
+
+            <setHeader headerName="Exchange.CONTENT_LENGTH">
+                <simple>${body.length}</simple>
+            </setHeader>
+
+        </route>
+
+
+    </camelContext>
+
+
+</beans>

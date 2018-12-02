@@ -1,0 +1,12 @@
+<%
+//var captialName=strutil.toUpperCase(strutil.subStringTo(name,0,1))+strutil.subString(name,1);
+var cn=captialtag.captial(name);
+%>
+
+public void set${cn}(${type} ${name}) {
+   this.${name}=${name};
+}
+
+public ${type} get${cn}() {
+    return this.${name};
+}
