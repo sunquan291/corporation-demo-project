@@ -1,3 +1,0 @@
-grant{
-    permission com.zte.sunquan.demo.security.AppPermission "hello","read";
-};
