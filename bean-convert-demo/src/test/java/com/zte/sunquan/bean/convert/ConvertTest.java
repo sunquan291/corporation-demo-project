@@ -2,7 +2,10 @@ package com.zte.sunquan.bean.convert;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.zte.sunquan.bean.covert.BeanUtils;
@@ -73,5 +76,28 @@ public class ConvertTest {
 
         beanDst.setSubBean(dstSubBean);
         System.out.println(beanDst);
+    }
+
+
+    @Test
+    public void testBeanField() throws Exception {
+        Object value = BeanUtils.fieldConvert("name", "sunquan", BeanSrc.class);
+        Assert.assertEquals("sunquan", value);
+        value = BeanUtils.fieldConvert("gender", "BOY", BeanSrc.class);
+        Assert.assertEquals(1, value);
+        value = BeanUtils.fieldConvert("info-details", "info", BeanSrc.class);
+        Assert.assertEquals("info", value);
+    }
+
+    @Test
+    public void testBeanField2() throws Exception {
+        Object value = BeanUtils.jsonFieldConvert("info-details", "info", BeanSrc.class);
+        Assert.assertEquals("info", value);
+    }
+
+    @Test
+    public void testBeanField3() throws Exception {
+        Object value = BeanUtils.jsonFieldConvert("not-params", "param", BeanSrc.class);
+        Assert.assertEquals("param", value);
     }
 }
