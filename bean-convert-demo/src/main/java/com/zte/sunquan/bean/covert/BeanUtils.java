@@ -42,6 +42,8 @@ public class BeanUtils<T, U> {
         for (PropertyDescriptor srcDes : propertyDescriptors) {
             if (srcDes.getName().equals("class"))
                 continue;
+            if (!isPrimitiveExceptString(srcDes.getPropertyType()))
+                continue;
             PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
             Object value = srcDes.getReadMethod().invoke(src);
             if (null == value)
@@ -52,8 +54,30 @@ public class BeanUtils<T, U> {
                 Object intValue = toIndex.invoke(null, value.toString());
                 dstDes.getWriteMethod().invoke(dst, intValue);
 
-            } else
+            } else {
                 dstDes.getWriteMethod().invoke(dst, value);
+            }
+        }
+    }
+
+    /**
+     * 判断一个对象是否是基本类型或基本类型的封装类型
+     */
+    private static boolean isPrimitive(Object obj) {
+        try {
+            return ((Class<?>) obj.getClass().getField("TYPE").get(null)).isPrimitive();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static boolean isPrimitiveExceptString(Class cls) {
+        if (cls == String.class)
+            return true;
+        try {
+            return ((Class<?>) cls.getField("TYPE").get(null)).isPrimitive();
+        } catch (Exception e) {
+            return false;
         }
     }
 

@@ -10,4 +10,5 @@ public class BeanDst extends Base{
     private int age;
     private int gender;
     //private String topic;
+    private SubBean subBean;
 }

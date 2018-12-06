@@ -1,10 +1,11 @@
 package com.zte.sunquan.bean.convert;
 
-import com.zte.sunquan.bean.covert.BeanUtils;
-import org.junit.Test;
-
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+
+import org.junit.Test;
+
+import com.zte.sunquan.bean.covert.BeanUtils;
 
 public class ConvertTest {
     @Test
@@ -49,6 +50,28 @@ public class ConvertTest {
         beanSrc.setGender(null);
         BeanDst beanDst = new BeanDst();
         BeanUtils.<BeanSrc, BeanDst>shallowConvert(beanSrc, beanDst);
+        System.out.println(beanDst);
+    }
+
+    @Test
+    public void testBean5() throws Exception {
+        BeanSrc beanSrc = new BeanSrc();
+        beanSrc.setName("sunquan");
+        beanSrc.setAge(28);
+        beanSrc.setTopic("topic1");
+        beanSrc.setGender(null);
+        SubBean subBean = new SubBean();
+        subBean.setName("sub-bean");
+        beanSrc.setSubBean(subBean);
+
+        BeanDst beanDst = new BeanDst();
+        BeanUtils.<BeanSrc, BeanDst>shallowConvert(beanSrc, beanDst);
+        System.out.println(beanDst);
+        SubBean dstSubBean = new SubBean();
+        BeanUtils.shallowConvert(subBean, dstSubBean);
+        System.out.println(dstSubBean);
+
+        beanDst.setSubBean(dstSubBean);
         System.out.println(beanDst);
     }
 }
