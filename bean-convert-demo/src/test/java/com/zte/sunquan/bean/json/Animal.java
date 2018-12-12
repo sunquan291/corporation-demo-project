@@ -9,10 +9,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "type")
+        property = "type")//返回的JSON中会生成一个type字段，但为dog或cat
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Dog.class,
-                name = "dog")
+                name = "dog"),
+        @JsonSubTypes.Type(value = Cat.class,
+                name = "cat")
 })
 public class Animal {
     private String name;

@@ -3,13 +3,12 @@ package com.zte.sunquan.bean.json;
 import lombok.Data;
 import lombok.ToString;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Data
-@JsonTypeName(value = "dog")
+@JsonTypeName(value = "cat")
 @ToString(callSuper = true)
 //@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS,property = "class")//使用类名赋值class
-public class Dog extends Animal {
+public class Cat extends Animal {
     private int age;
 }
