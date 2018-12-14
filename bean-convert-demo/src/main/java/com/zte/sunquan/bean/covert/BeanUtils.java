@@ -1,6 +1,8 @@
 package com.zte.sunquan.bean.covert;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -8,8 +10,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Bean模型的转化
@@ -142,26 +142,43 @@ public class BeanUtils<T, U> {
      * @throws IllegalAccessException
      * @throws NoSuchMethodException
      */
-    public static <T, U> void shallowConvert(T src, U dst) throws IntrospectionException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    public static <T, U> void shallowConvert(T src, U dst) throws IntrospectionException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         BeanInfo beanInfo = Introspector.getBeanInfo(src.getClass());
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         for (PropertyDescriptor srcDes : propertyDescriptors) {
             if (srcDes.getName().equals("class"))
-                continue;
-            if (!isPrimitiveExceptString(srcDes.getPropertyType()))
-                continue;
-            PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
-            Object value = srcDes.getReadMethod().invoke(src);
-            if (null == value)
-                continue;
-            if (isEnum(srcDes.getPropertyType())) {
-                //toIndex string->int
-                Method toIndex = srcDes.getPropertyType().getMethod("toIndex", String.class);
-                Object intValue = toIndex.invoke(null, value.toString());
-                dstDes.getWriteMethod().invoke(dst, intValue);
+                continue;//不处理
+            Class<?> srcFieldType = srcDes.getPropertyType();
+            try {
+                if (srcFieldType == String.class || srcFieldType.isPrimitive()) {
+                    PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
+                    Object value = srcDes.getReadMethod().invoke(src);
+                    dstDes.getWriteMethod().invoke(dst, value);
+                } else if (isEnum(srcDes.getPropertyType())) {
+                    PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
+                    Object value = srcDes.getReadMethod().invoke(src);
+                    if (value == null)
+                        continue;
+                    //toIndex string->int
+                    Method toIndex = srcDes.getPropertyType().getMethod("toIndex", String.class);
 
-            } else {
-                dstDes.getWriteMethod().invoke(dst, value);
+                    //srcDes.getPropertyType().getEnumConstants()[0]
+
+                    Object intValue = toIndex.invoke(null, value.toString());
+                    dstDes.getWriteMethod().invoke(dst, intValue);
+                } else {
+                    //复杂类型
+                    System.out.println("complex field " + srcFieldType.getName());
+                    Object srcFieldInstance = srcFieldType.newInstance();
+                    PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
+                    Object dstFieldInstance = dstDes.getPropertyType().newInstance();
+                    shallowConvert(srcFieldInstance,dstFieldInstance);
+
+                    dstDes.getWriteMethod().invoke(dst, dstFieldInstance);
+
+                }
+            } catch (IntrospectionException e) {
+                System.out.println("not found " + srcDes.getName() + " in dest object.");
             }
         }
     }
@@ -181,7 +198,8 @@ public class BeanUtils<T, U> {
         if (cls == String.class)
             return true;
         try {
-            return ((Class<?>) cls.getField("TYPE").get(null)).isPrimitive();
+            //return ((Class<?>) cls.getField("TYPE").get(null)).isPrimitive();
+            return cls.isPrimitive();
         } catch (Exception e) {
             return false;
         }

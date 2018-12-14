@@ -4,6 +4,9 @@ import lombok.Data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+import java.util.Set;
+
 @Data
 public class BeanSrc extends Base {
     private String name;
@@ -15,8 +18,9 @@ public class BeanSrc extends Base {
     private String infoDetails;
     @JsonProperty("not-params")
     private String params;
-    //private String[] params;
-    //private List<String> params2;
+//    private String[] stringArray;
+//    private List<String> stringList;
+//    private Set<String> stringSet;
     //private List<SubBean> subBeans;
 
 }

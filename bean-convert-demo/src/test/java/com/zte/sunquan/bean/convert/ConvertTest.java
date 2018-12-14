@@ -33,7 +33,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void testBean3() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException, IntrospectionException {
+    public void testBean3() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException, IntrospectionException, InstantiationException {
         BeanSrc beanSrc = new BeanSrc();
         beanSrc.setName("sunquan");
         beanSrc.setAge(28);
@@ -62,7 +62,7 @@ public class ConvertTest {
         beanSrc.setName("sunquan");
         beanSrc.setAge(28);
         beanSrc.setTopic("topic1");
-        beanSrc.setGender(null);
+        beanSrc.setGender(Gender.BOY);
         SubBean subBean = new SubBean();
         subBean.setName("sub-bean");
         beanSrc.setSubBean(subBean);
