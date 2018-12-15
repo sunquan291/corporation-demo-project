@@ -41,4 +41,17 @@ public class JsonConvert2 {
         Store store1 = mapper.readValue(json, Store.class);
         System.out.println(store1);
     }
+
+    @Test
+    public void testC() throws IOException {
+        Car car = new Car();
+        car.setCarName("abc");
+        car.setVirtual(false);
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(car);
+        System.out.println(json);
+        String content="{\"class\":\"com.zte.sunquan.bean.json2.Car\",\"carName\":\"abc\",\"tels\":[{}],\"virtual\":false}";
+        Car car1 = mapper.readValue(content, Car.class);
+        System.out.println(car1);
+    }
 }

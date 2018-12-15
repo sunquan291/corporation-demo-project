@@ -1,8 +1,8 @@
 package com.zte.sunquan.bean.covert;
 
 
-import com.zte.sunquan.bean.annoation.Persistence;
-import com.zte.sunquan.bean.annoation.PersistenceSerialize;
+import com.zte.sunquan.bean.annoation.Store;
+import com.zte.sunquan.bean.annoation.StoreSerialize;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -18,8 +18,7 @@ import java.util.List;
  * 操作模型与存储模型转化
  */
 public class ModelBeanUtils<T, U> {
-    private final static String TO_INDEX = "toIndex";
-
+    private final static String ENUM_TO_INDEX = "toIndex";
 
     /**
      * Bean模型转换，只针对基本类型+String的映射转换
@@ -51,28 +50,34 @@ public class ModelBeanUtils<T, U> {
                     if (value == null)
                         continue;
                     //toIndex string->int
-                    Method toIndex = srcDes.getPropertyType().getMethod("toIndex", String.class);
+                    Method toIndex = srcDes.getPropertyType().getMethod(ENUM_TO_INDEX, String.class);
                     Object intValue = toIndex.invoke(null, value.toString());
                     dstDes.getWriteMethod().invoke(dst, intValue);
                 } else {
                     //复杂类型
                     //1是否序列化至存储模型字段
-                    String fieldName = Character.toLowerCase(srcFieldType.getSimpleName().charAt(0)) + srcFieldType.getSimpleName().substring(1);
+                    String fieldName = Character.toLowerCase(srcDes.getName().charAt(0)) + srcDes.getName().substring(1);
                     Field field = src.getClass().getDeclaredField(fieldName);
+                    boolean handleByAnnotation = false;
                     for (Annotation annotation : field.getAnnotations()) {
-                        if (annotation instanceof PersistenceSerialize) {
+                        if (annotation instanceof StoreSerialize) {
                             //执行序列化动作
-                        } else if (annotation instanceof Persistence) {
-                            Class persistenceClass = ((Persistence) annotation).value();
-                            //执行另一个类的序列化
+                            handleByAnnotation = true;
+                        } else if (annotation instanceof Store) {
+                            //不支持
                         }
-                    }
 
-                    System.out.println("complex field " + srcFieldType.getName());
-                    Object srcFieldInstance = srcFieldType.newInstance();
+                    }
+                    if (handleByAnnotation)
+                        continue;
+                    //没有任何注解
+                    System.out.println("complex field " + srcDes.getName());
+                    Object srcValue = srcDes.getReadMethod().invoke(src);
+                    if (srcValue == null)
+                        continue;
                     PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
                     Object dstFieldInstance = dstDes.getPropertyType().newInstance();
-                    convert(srcFieldInstance, dstFieldInstance);
+                    convert(srcValue, dstFieldInstance);
                     dstDes.getWriteMethod().invoke(dst, dstFieldInstance);
                 }
             } catch (IntrospectionException e) {
@@ -102,7 +107,7 @@ public class ModelBeanUtils<T, U> {
                     if (value == null)
                         continue;
                     //toIndex string->int
-                    Method toIndex = srcDes.getPropertyType().getMethod("toIndex", String.class);
+                    Method toIndex = srcDes.getPropertyType().getMethod(ENUM_TO_INDEX, String.class);
                     Object intValue = toIndex.invoke(null, value.toString());
                     dstDes.getWriteMethod().invoke(dst, intValue);
                 } else {
@@ -112,11 +117,11 @@ public class ModelBeanUtils<T, U> {
                     Field field = src.getClass().getDeclaredField(fieldName);
                     boolean handleByAnnotation = false;
                     for (Annotation annotation : field.getAnnotations()) {
-                        if (annotation instanceof PersistenceSerialize) {
+                        if (annotation instanceof StoreSerialize) {
                             //执行序列化动作
                             handleByAnnotation = true;
-                        } else if (annotation instanceof Persistence) {
-                            Class persistenceClass = ((Persistence) annotation).value();
+                        } else if (annotation instanceof Store) {
+                            Class persistenceClass = ((Store) annotation).value();
                             //执行另一个类的序列化
                             Object srcValue = srcDes.getReadMethod().invoke(src);
                             Object dstFieldInstance = persistenceClass.newInstance();

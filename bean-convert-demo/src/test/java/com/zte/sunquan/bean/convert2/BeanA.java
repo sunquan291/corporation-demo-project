@@ -1,7 +1,7 @@
 package com.zte.sunquan.bean.convert2;
 
-import com.zte.sunquan.bean.annoation.Persistence;
-import com.zte.sunquan.bean.annoation.PersistenceSerialize;
+import com.zte.sunquan.bean.annoation.Store;
+import com.zte.sunquan.bean.annoation.StoreSerialize;
 import com.zte.sunquan.bean.convert.Base;
 import lombok.Data;
 
@@ -11,10 +11,10 @@ public class BeanA extends Base {
     private int age;
     private AGender gender;
 
-    @Persistence(ASubBean2.class)
+    @Store(ASubBean2.class)
     private ASubBean subBean;
 
-    @PersistenceSerialize
+    @StoreSerialize
     private ASubBean aSubBean;
 
     private String infoDetails;
