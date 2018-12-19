@@ -29,8 +29,8 @@ public class JsonConvert {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(cat);
         System.out.println(json);
-        String conent = "{\"type\":\"dog\",\"name\":\"abc\",\"age\":100}";//没有TYPE则报错
-        Animal animal = mapper.readValue(conent, Animal.class);
+        String conent = "{\"type\":\"dog\",\"name\":\"abc\",\"age\":100,\"a\":1}";//没有TYPE则报错
+        Animal animal = mapper.readValue(conent, Dog.class);
         System.out.println(animal);
     }
 }
