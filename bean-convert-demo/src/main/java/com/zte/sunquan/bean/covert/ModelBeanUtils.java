@@ -1,9 +1,6 @@
 package com.zte.sunquan.bean.covert;
 
 
-import com.zte.sunquan.bean.annoation.Store;
-import com.zte.sunquan.bean.annoation.StoreSerialize;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -14,11 +11,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
+import com.zte.sunquan.bean.annoation.Converter;
+import com.zte.sunquan.bean.annoation.Store;
+import com.zte.sunquan.bean.annoation.StoreConvert;
+
 /**
  * 操作模型与存储模型转化
  */
+@Slf4j
 public class ModelBeanUtils<T, U> {
+    public static final int OPER2STORE = 1;
+    public static final int STORE2OPER = 2;
     private final static String ENUM_TO_INDEX = "toIndex";
+
+    public static <T, U> void convert(T src, U dst) {
+        convert(src, dst, OPER2STORE);
+    }
 
     /**
      * Bean模型转换，只针对基本类型+String的映射转换
@@ -27,23 +37,30 @@ public class ModelBeanUtils<T, U> {
      * @param dst
      * @param <T>
      * @param <U>
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
      */
-    public static <T, U> void convert(T src, U dst) throws IntrospectionException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
-        BeanInfo beanInfo = Introspector.getBeanInfo(src.getClass());
+    public static <T, U> void convert(T src, U dst, int direction) {
+        BeanInfo beanInfo = null;
+        try {
+            beanInfo = Introspector.getBeanInfo(src.getClass());
+        } catch (IntrospectionException e) {
+            log.error("ERROR:{} is not java bean", src.getClass());
+        }
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         for (PropertyDescriptor srcDes : propertyDescriptors) {
             if (srcDes.getName().equals("class"))
                 continue;//不处理
             Class<?> srcFieldType = srcDes.getPropertyType();
             try {
-                if (srcFieldType == String.class || srcFieldType.isPrimitive()) {
+                if (srcFieldType == String.class || srcFieldType.isPrimitive() || Number.class.isAssignableFrom(srcFieldType)) {
                     PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
                     Object value = srcDes.getReadMethod().invoke(src);
                     dstDes.getWriteMethod().invoke(dst, value);
+                } else if (Indexable.class.isAssignableFrom(srcDes.getPropertyType())) {
+                    PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
+                    Indexable value = (Indexable) srcDes.getReadMethod().invoke(src);
+                    if (value == null)
+                        continue;
+                    dstDes.getWriteMethod().invoke(dst, value.index(value));
                 } else if (isEnum(srcDes.getPropertyType())) {
                     PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
                     Object value = srcDes.getReadMethod().invoke(src);
@@ -60,8 +77,13 @@ public class ModelBeanUtils<T, U> {
                     Field field = src.getClass().getDeclaredField(fieldName);
                     boolean handleByAnnotation = false;
                     for (Annotation annotation : field.getAnnotations()) {
-                        if (annotation instanceof StoreSerialize) {
+                        if (annotation instanceof StoreConvert) {
                             //执行序列化动作
+                            Class<? extends Converter> converter = ((StoreConvert) annotation).converter();
+                            Object srcValue = srcDes.getReadMethod().invoke(src);
+                            Object convertValue = converter.newInstance().convert(srcValue);
+                            PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
+                            dstDes.getWriteMethod().invoke(dst, convertValue);
                             handleByAnnotation = true;
                         } else if (annotation instanceof Store) {
                             //不支持
@@ -77,27 +99,40 @@ public class ModelBeanUtils<T, U> {
                         continue;
                     PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
                     Object dstFieldInstance = dstDes.getPropertyType().newInstance();
-                    convert(srcValue, dstFieldInstance);
+                    convert(srcValue, dstFieldInstance, direction);
                     dstDes.getWriteMethod().invoke(dst, dstFieldInstance);
                 }
             } catch (IntrospectionException e) {
-                System.out.println("not found " + srcDes.getName() + " in dest object.");
+                log.error("IntrospectionException", e);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                log.error("NoSuchFieldException", e);
+            } catch (InvocationTargetException e) {
+                log.error("InvocationTargetException", e);
+            } catch (IllegalAccessException e) {
+                log.error("IllegalAccessException", e);
+            } catch (NoSuchMethodException e) {
+                log.error("NoSuchMethodException", e);
+            } catch (InstantiationException e) {
+                log.error("InstantiationException", e);
             }
         }
     }
 
 
-    public static <T, U> void convert(T src, U dst, List<Object> result) throws IntrospectionException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
-        BeanInfo beanInfo = Introspector.getBeanInfo(src.getClass());
+    public static <T, U> void convert(T src, U dst, List<Object> result) {
+        BeanInfo beanInfo = null;
+        try {
+            beanInfo = Introspector.getBeanInfo(src.getClass());
+        } catch (IntrospectionException e) {
+            log.error("ERROR:{} is not java bean", src.getClass());
+        }
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
         for (PropertyDescriptor srcDes : propertyDescriptors) {
             if (srcDes.getName().equals("class"))
                 continue;//不处理
             Class<?> srcFieldType = srcDes.getPropertyType();
             try {
-                if (srcFieldType == String.class || srcFieldType.isPrimitive()) {
+                if (srcFieldType == String.class || srcFieldType.isPrimitive() || Number.class.isAssignableFrom(srcFieldType)) {
                     PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
                     Object value = srcDes.getReadMethod().invoke(src);
                     dstDes.getWriteMethod().invoke(dst, value);
@@ -117,7 +152,7 @@ public class ModelBeanUtils<T, U> {
                     Field field = src.getClass().getDeclaredField(fieldName);
                     boolean handleByAnnotation = false;
                     for (Annotation annotation : field.getAnnotations()) {
-                        if (annotation instanceof StoreSerialize) {
+                        if (annotation instanceof StoreConvert) {
                             //执行序列化动作
                             handleByAnnotation = true;
                         } else if (annotation instanceof Store) {
@@ -143,9 +178,17 @@ public class ModelBeanUtils<T, U> {
                     dstDes.getWriteMethod().invoke(dst, dstFieldInstance);
                 }
             } catch (IntrospectionException e) {
-                System.out.println("not found " + srcDes.getName() + " in dest object.");
+                log.error("IntrospectionException", e);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                log.error("NoSuchFieldException", e);
+            } catch (InvocationTargetException e) {
+                log.error("InvocationTargetException", e);
+            } catch (IllegalAccessException e) {
+                log.error("IllegalAccessException", e);
+            } catch (NoSuchMethodException e) {
+                log.error("NoSuchMethodException", e);
+            } catch (InstantiationException e) {
+                log.error("InstantiationException", e);
             }
         }
         result.add(dst);
@@ -163,4 +206,5 @@ public class ModelBeanUtils<T, U> {
         }
         return flag;
     }
+
 }

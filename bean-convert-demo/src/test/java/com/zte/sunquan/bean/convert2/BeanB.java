@@ -1,8 +1,9 @@
 package com.zte.sunquan.bean.convert2;
 
-import com.zte.sunquan.bean.convert.Base;
 import lombok.Data;
 import lombok.ToString;
+
+import com.zte.sunquan.bean.convert.Base;
 
 @Data
 @ToString(callSuper = true)
@@ -12,4 +13,5 @@ public class BeanB extends Base {
     private int gender;
     private String aSubBean;
     private ASubBean bSubBean;
+    private int bGender;
 }
