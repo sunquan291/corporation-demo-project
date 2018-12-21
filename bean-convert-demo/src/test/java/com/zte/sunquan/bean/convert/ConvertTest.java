@@ -2,8 +2,6 @@ package com.zte.sunquan.bean.convert;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -85,18 +83,22 @@ public class ConvertTest {
         Assert.assertEquals("sunquan", value);
         value = BeanUtils.fieldConvert("gender", "BOY", BeanSrc.class);
         Assert.assertEquals(1, value);
-        value = BeanUtils.fieldConvert("info-details", "info", BeanSrc.class);
+        value = BeanUtils.fieldConvert("infoDetails", "info", BeanSrc.class);
         Assert.assertEquals("info", value);
     }
 
     @Test
     public void testBeanField2() throws Exception {
+        //测试JSON格式的输入
         Object value = BeanUtils.jsonFieldConvert("info-details", "info", BeanSrc.class);
         Assert.assertEquals("info", value);
+        value = BeanUtils.jsonFieldConvert("gender", "BOY", BeanSrc.class);
+        Assert.assertEquals(1, value);
     }
 
     @Test
     public void testBeanField3() throws Exception {
+        //测试JSON格式的输入
         Object value = BeanUtils.jsonFieldConvert("not-params", "param", BeanSrc.class);
         Assert.assertEquals("param", value);
     }

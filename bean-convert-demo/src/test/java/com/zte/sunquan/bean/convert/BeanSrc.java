@@ -14,7 +14,7 @@ public class BeanSrc extends Base {
     private Gender gender;
 
     private SubBean subBean;
-
+    @JsonProperty("info-details")
     private String infoDetails;
     @JsonProperty("not-params")
     private String params;

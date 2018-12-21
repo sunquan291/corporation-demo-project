@@ -1,8 +1,6 @@
 package com.zte.sunquan.bean.covert;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -11,17 +9,22 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import lombok.extern.slf4j.Slf4j;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Bean模型的转化
  *
  * @param <T>
  * @param <U>
  */
+@Slf4j
 public class BeanUtils<T, U> {
     private final static String TO_INDEX = "toIndex";
 
     /**
-     * 字段值的转换(注意枚举)
+     * 字段值的转换(支持枚举,但注意是属性名，非JSON)
      *
      * @param fieldName
      * @param cls
@@ -40,16 +43,28 @@ public class BeanUtils<T, U> {
         }
     }
 
-    public static <T, U> Object jsonFieldConvert(String jsonField, Object fieldValue, Class cls) throws IntrospectionException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static <T, U> Object jsonFieldConvert(String jsonField, Object fieldValue, Class cls) {
         String fieldName = getFieldByJsonProperty(cls, jsonField);
-        PropertyDescriptor des = new PropertyDescriptor(fieldName, cls);
-        if (isEnum(des.getPropertyType())) {
-            Method toIndex = des.getPropertyType().getMethod(TO_INDEX, String.class);
-            Object intValue = toIndex.invoke(null, fieldValue);
-            return intValue;
-        } else {
-            return fieldValue;
+        PropertyDescriptor des = null;
+        try {
+            des = new PropertyDescriptor(fieldName, cls);
+            if (isEnum(des.getPropertyType())) {
+                Method toIndex = des.getPropertyType().getMethod(TO_INDEX, String.class);
+                Object intValue = toIndex.invoke(null, fieldValue);
+                return intValue;
+            } else {
+                return fieldValue;
+            }
+        } catch (IntrospectionException e) {
+            log.error("IntrospectionException", e);
+        } catch (NoSuchMethodException e) {
+            log.error("NoSuchMethodException", e);
+        } catch (IllegalAccessException e) {
+            log.error("IllegalAccessException", e);
+        } catch (InvocationTargetException e) {
+            log.error("InvocationTargetException", e);
         }
+        return fieldValue;
     }
 
     public static String getFieldByJsonProperty(Class searchType, String jsonPropertyName) {
@@ -172,7 +187,7 @@ public class BeanUtils<T, U> {
                     Object srcFieldInstance = srcFieldType.newInstance();
                     PropertyDescriptor dstDes = new PropertyDescriptor(srcDes.getName(), dst.getClass());
                     Object dstFieldInstance = dstDes.getPropertyType().newInstance();
-                    shallowConvert(srcFieldInstance,dstFieldInstance);
+                    shallowConvert(srcFieldInstance, dstFieldInstance);
 
                     dstDes.getWriteMethod().invoke(dst, dstFieldInstance);
 
@@ -206,15 +221,17 @@ public class BeanUtils<T, U> {
     }
 
     private static boolean isEnum(Class cls) {
-        boolean flag = false;
-        Class cur = cls;
-        while (cur != null && cur != Object.class) {
-            if (cur == Enum.class) {
-                flag = true;
-                break;
-            }
-            cur = cur.getSuperclass();
-        }
-        return flag;
+//        boolean flag = false;
+//        Class cur = cls;
+//        while (cur != null && cur != Object.class) {
+//            if (cur == Enum.class) {
+//                flag = true;
+//                break;
+//            }
+//            cur = cur.getSuperclass();
+//        }
+//        return flag;
+
+        return Enum.class.isAssignableFrom(cls);
     }
 }
