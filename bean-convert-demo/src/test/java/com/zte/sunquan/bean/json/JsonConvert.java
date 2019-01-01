@@ -29,8 +29,15 @@ public class JsonConvert {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(cat);
         System.out.println(json);
-        String conent = "{\"type\":\"dog\",\"name\":\"abc\",\"age\":100,\"a\":1}";//没有TYPE则报错
-        Animal animal = mapper.readValue(conent, Dog.class);
+        //String content = "{\"type\":\"dog\",\"name\":\"abc\",\"age\":100,\"a\":1}";//没有TYPE则报错
+        String content = "{\"type\":\"dog\",\"name\":\"abc\"}";//没有TYPE则报错
+        Animal animal = mapper.readValue(content, Dog.class);
         System.out.println(animal);
+
+        //JSON数据多于模型  转换有问题 （@JsonIgnoreProperties(ignoreUnknown=true)）
+        //JSON数据少于模型  转换无问题
+        //@JsonIgnore  JSON数据转换成模型时 忽略JSON该字段数据
+        //@JsonIgnore  模型转换成JSON数据时 忽略模型中该字段数据
+
     }
 }

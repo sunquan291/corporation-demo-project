@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonTypeName(value = "dog")
 @ToString(callSuper = true)
 //@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS,property = "class")//使用类名赋值class
-@JsonIgnoreProperties(ignoreUnknown=true)
+//@JsonIgnoreProperties(ignoreUnknown=true)
 public class Dog extends Animal {
     private int age;
 }
