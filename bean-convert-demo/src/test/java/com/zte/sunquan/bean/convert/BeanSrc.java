@@ -1,6 +1,7 @@
 package com.zte.sunquan.bean.convert;
 
 import lombok.Data;
+import lombok.ToString;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
+@ToString(callSuper = true)
 public class BeanSrc extends Base {
     private String name;
     private int age;

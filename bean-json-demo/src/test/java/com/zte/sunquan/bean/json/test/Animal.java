@@ -1,8 +1,7 @@
-package com.zte.sunquan.bean.json;
+package com.zte.sunquan.bean.json.test;
 
 import lombok.Data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -10,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "type")//返回的JSON中会生成一个type字段，但为dog或cat
+        property = "type")//通过该字段判断真实类型
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Dog.class,
                 name = "dog"),

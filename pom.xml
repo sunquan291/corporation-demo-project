@@ -12,6 +12,7 @@
         <module>mybaits-demo</module>
         <module>bean-convert-demo</module>
         <module>jesery-demo</module>
+        <module>bean-json-demo</module>
     </modules>
     <dependencies>
         <dependency>

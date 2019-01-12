@@ -11,16 +11,19 @@ import com.zte.sunquan.bean.covert.BeanUtils;
 public class ConvertTest {
     @Test
     public void testBean1() throws Exception {
+        //对象转换
         BeanSrc beanSrc = new BeanSrc();
         beanSrc.setName("sunquan");
         beanSrc.setAge(28);
         BeanDst beanDst = new BeanDst();
         BeanUtils.<BeanSrc, BeanDst>shallowConvert(beanSrc, beanDst);
+        System.out.println(beanSrc);
         System.out.println(beanDst);
     }
 
     @Test
     public void testBean2() throws Exception {
+        //对象转换 枚举转成int
         BeanSrc beanSrc = new BeanSrc();
         beanSrc.setName("sunquan");
         beanSrc.setAge(28);
