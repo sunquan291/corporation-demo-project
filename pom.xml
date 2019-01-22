@@ -13,6 +13,7 @@
         <module>bean-convert-demo</module>
         <module>jesery-demo</module>
         <module>bean-json-demo</module>
+        <module>java8-new-feature</module>
     </modules>
     <dependencies>
         <dependency>
