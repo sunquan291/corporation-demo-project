@@ -1,10 +1,10 @@
-package com.zte.sunquan.demo.feature.stream;
+package com.zte.sunquan.demo.future.stream;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 遍平化流示例
+ * 遍平化流示例flatMap
  */
 public class FlatStream {
 
