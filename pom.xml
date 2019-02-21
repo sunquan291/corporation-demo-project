@@ -15,6 +15,7 @@
         <module>bean-json-demo</module>
         <module>java8-new-feature</module>
         <module>graph-ql-demo</module>
+        <module>lombok-demo</module>
     </modules>
     <dependencies>
         <dependency>
