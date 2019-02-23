@@ -16,6 +16,10 @@
         <module>java8-new-feature</module>
         <module>graph-ql-demo</module>
         <module>lombok-demo</module>
+        <module>antlr-demo</module>
+        <module>file-search</module>
+        <module>ext-blueprint</module>
+        <module>maven-plugin</module>
     </modules>
     <dependencies>
         <dependency>
