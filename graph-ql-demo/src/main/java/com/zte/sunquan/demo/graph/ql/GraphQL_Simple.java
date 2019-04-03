@@ -28,6 +28,12 @@ public class GraphQL_Simple {
         user.setSex("男");
         user.setIntro("博主，专注于Linux,Java,nodeJs,Web前端:Html5,JavaScript,CSS3");
 
+        User user1 = new User();
+        user1.setName("zhaiqi111anfeng");
+        user1.setSex("男");
+        user1.setIntro("博主，专注于Linux,Java,nodeJs,Web前端:Html5,JavaScript,CSS3");
+
+
         //定义GraphQL类型
         GraphQLObjectType userType = newObject()
                 .name("User")
@@ -39,13 +45,19 @@ public class GraphQL_Simple {
         //定义暴露给客户端的查询query api
         GraphQLObjectType queryType = newObject()
                 .name("userQuery")
-                .field(newFieldDefinition().type(userType).name("user").staticValue(user))
+                .field(newFieldDefinition().type(userType).name("user")
+                        .dataFetcher(env -> {
+                            System.out.println(env);
+                            return user1;
+                        }))
+                        //.staticValue(user))
                 .build();
 
         //创建Schema
         GraphQLSchema schema = GraphQLSchema.newSchema()
                 .query(queryType)
                 .build();
+        //模型+接口 组装
 
         //测试输出
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();

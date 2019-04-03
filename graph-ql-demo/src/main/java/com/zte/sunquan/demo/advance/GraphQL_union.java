@@ -73,6 +73,7 @@ public class GraphQL_union {
                         .type(new GraphQLList(animalUnion))
                         .name("animals")
                         .dataFetcher(evn -> {
+                            System.out.println(evn);
                             return anmials;
                         }))
                 .build();
