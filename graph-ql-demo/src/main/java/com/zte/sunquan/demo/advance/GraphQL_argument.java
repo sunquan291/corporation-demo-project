@@ -45,7 +45,7 @@ public class GraphQL_argument {
 
         //定义GraphQL类型
         GraphQLObjectType userType = newObject()//定义User类型
-                .name("User")
+                .name("User2")
                 .field(newFieldDefinition().name("name").type(GraphQLString))
                 .field(newFieldDefinition().name("sex").type(GraphQLString))
                 .field(newFieldDefinition().name("intro").type(GraphQLString))

@@ -36,7 +36,7 @@ public class GraphQL_Simple {
 
         //定义GraphQL类型
         GraphQLObjectType userType = newObject()
-                .name("User")
+                .name("User2")
                 .field(newFieldDefinition().name("name").type(GraphQLString))
                 .field(newFieldDefinition().name("sex").type(GraphQLString))
                 .field(newFieldDefinition().name("intro").type(GraphQLString))

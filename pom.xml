@@ -21,6 +21,8 @@
         <module>ext-blueprint</module>
         <module>maven-plugin</module>
         <module>spring-demo</module>
+        <module>graph-ql-spring</module>
+        <module>graph-ql-demo11</module>
     </modules>
     <dependencies>
         <dependency>
