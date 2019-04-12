@@ -1,11 +1,14 @@
 package com.zte.sunquan.demo.graph.ql;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import graphql.ExecutionInput;
 import graphql.GraphQL;
+import graphql.execution.DataFetcherResult;
+import graphql.schema.DataFetcher;
+import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
@@ -50,6 +53,20 @@ public class GraphQL_simple5 {
 
 
     public static void main(String[] args) {
+
+        DataFetcher pnDataFetcher = new DataFetcher() {
+            @Override
+            public Object get(DataFetchingEnvironment environment) {
+                Integer id = environment.getArgument("id");
+                User2 userById = getUserById(id);
+//                List<GraphQLError> errors = ((List)response.get("errors")).stream()
+//                        .map(MyMapGraphQLError::new)
+//                        .collect(Collectors.toList());
+//                return new DataFetcherResult(response.get("data"), errors);
+                return new DataFetcherResult<>(userById, null);
+            }
+        };
+
         //解析Schema文件
         String schemaFilePath = "myschema.graphqls";
         File schemaFile = new File(GraphQL_simple5.class.getClassLoader().getResource(schemaFilePath).getFile());
@@ -81,18 +98,20 @@ public class GraphQL_simple5 {
 
         executionInput = ExecutionInput.newExecutionInput().variables(variable).
                 query("query userQuery($iidd:Int){user(id:$iidd){id,age,userName,type,dogs{id,dogName}}}").build();
-        result = graphQL.execute(executionInput).getData();
+        //result = graphQL.execute(executionInput).getData();
+
+        result = graphQL.execute(executionInput).toSpecification();
+
         System.out.println(result);
         Gson gson = new Gson();
-        List<User2> end = gson.fromJson(result.get("user").toString(), new TypeToken<List<User2>>() {
+        Set<User2> end = gson.fromJson(result.get("user").toString(), new TypeToken<Set<User2>>() {
         }.getType());
-        System.out.println(end);
-
+        System.out.println("B" + end);
 
 
         executionInput = ExecutionInput.newExecutionInput().
                 query("query {user(id:1){id,age,userName,type,dogs{id,dogName}}}").build();
         result = graphQL.execute(executionInput).getData();
-        System.out.println(result);
+        System.out.println("a" + result);
     }
 }
