@@ -1,0 +1,32 @@
+schema {
+query: userQuery
+}
+type userQuery {
+user(id: Int): [User]
+}
+
+type Cat{
+id: Int
+}
+type Fish{
+id: Int
+}
+
+
+type User {
+id: Int
+age: Int
+userName: String!
+dogs: [Dog]
+type:Position!
+}
+type Dog {
+id: Int
+dogName: String!
+}
+
+enum Position {
+    HIGH
+    LOW
+    MIDDLE
+}

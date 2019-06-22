@@ -20,6 +20,7 @@ import graphql.schema.GraphQLNonNull;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 
+import com.google.gson.Gson;
 import com.zte.sunquan.demo.model.User;
 
 /**
@@ -121,28 +122,32 @@ public class GraphQL_Simple2 {
                                 .type(new GraphQLNonNull(userInput)))
                         .dataFetcher(environment -> {
                             Map<String, Object> userInfoMap = environment.getArgument("userInfo");
-                            User userInfo = new User();
-                            for (String key : userInfoMap.keySet()) {
-                                switch (key) {
-                                    case "name":
-                                        userInfo.setName(userInfoMap.get("name").toString());
-                                        break;
-                                    case "sex":
-                                        userInfo.setSex(userInfoMap.get("sex").toString());
-                                        break;
-                                    case "intro":
-                                        userInfo.setIntro(userInfoMap.get("intro").toString());
-                                        break;
-                                    case "skills":
-                                        ArrayList<String> skillsList = (ArrayList<String>) userInfoMap.get("skills");
-                                        String[] skills = new String[skillsList.size()];
-                                        userInfo.setSkills(skillsList.toArray(skills));
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                            db.put(userInfo.getName(), userInfo);
+
+                            Gson gson=new Gson();
+                            User user = gson.fromJson(userInfoMap.toString(), User.class);
+                            db.put(user.getName(), user);
+//                            User userInfo = new User();
+//                            for (String key : userInfoMap.keySet()) {
+//                                switch (key) {
+//                                    case "name":
+//                                        userInfo.setName(userInfoMap.get("name").toString());
+//                                        break;
+//                                    case "sex":
+//                                        userInfo.setSex(userInfoMap.get("sex").toString());
+//                                        break;
+//                                    case "intro":
+//                                        userInfo.setIntro(userInfoMap.get("intro").toString());
+//                                        break;
+//                                    case "skills":
+//                                        ArrayList<String> skillsList = (ArrayList<String>) userInfoMap.get("skills");
+//                                        String[] skills = new String[skillsList.size()];
+//                                        userInfo.setSkills(skillsList.toArray(skills));
+//                                        break;
+//                                    default:
+//                                        break;
+//                                }
+//                            }
+//                            db.put(userInfo.getName(), userInfo);
                             return db.values();
                         }))
                 .field(newFieldDefinition()
@@ -184,7 +189,7 @@ public class GraphQL_Simple2 {
         Map<String, Object> result5 = graphQL.execute("{user($first: Int = 1){name,sex,intro}}").getData();
         System.out.println("result5:" + result5);
         result = graphQL.execute("mutation{addUserByInput(userInfo:{name:\"test2User\",sex:\"男\",intro:\"简介\",skills:[\"java\",\"nodejs\"]}){name,sex,intro}}").getData();
-        System.out.println(result);
+        System.out.println("D:"+result);
 
         result = graphQL.execute("mutation{delUserById(name:\"test2User\")}").getData();
         System.out.println(result);

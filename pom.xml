@@ -23,6 +23,7 @@
         <module>spring-demo</module>
         <module>graph-ql-spring</module>
         <module>graph-ql-demo11</module>
+        <module>framework-handler</module>
     </modules>
     <dependencies>
         <dependency>

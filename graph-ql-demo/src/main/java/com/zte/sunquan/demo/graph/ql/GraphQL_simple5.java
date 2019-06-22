@@ -68,7 +68,7 @@ public class GraphQL_simple5 {
         };
 
         //解析Schema文件
-        String schemaFilePath = "myschema.graphqls";
+        String schemaFilePath = "myschema1.graphqls";
         File schemaFile = new File(GraphQL_simple5.class.getClassLoader().getResource(schemaFilePath).getFile());
         SchemaParser schemaParser = new SchemaParser();
         TypeDefinitionRegistry typeRegistry = schemaParser.parse(schemaFile);
@@ -104,8 +104,9 @@ public class GraphQL_simple5 {
 
         System.out.println(result);
         Gson gson = new Gson();
-        Set<User2> end = gson.fromJson(result.get("user").toString(), new TypeToken<Set<User2>>() {
-        }.getType());
+        String data = gson.toJson(result.get("data"));
+        System.out.println(data);
+        User2 end = gson.fromJson(data,User2.class);
         System.out.println("B" + end);
 
 

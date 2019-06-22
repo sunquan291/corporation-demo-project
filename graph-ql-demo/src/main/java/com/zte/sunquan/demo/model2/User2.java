@@ -20,6 +20,7 @@ public class User2 implements Serializable {
     private int age;
     private String userName;
     private List<Dog> dogs;
+    private List<Animal> animals;
 
     private Position type;
 
@@ -33,6 +34,13 @@ public class User2 implements Serializable {
             dogs = new ArrayList<>();
         }
         dogs.add(dog);
+    }
+
+    public void addAnimal(Animal animal) {
+        if (animals == null) {
+            animals = new ArrayList<>();
+        }
+        animals.add(animal);
     }
 
 }

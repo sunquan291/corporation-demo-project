@@ -32,19 +32,19 @@ public class TransmittableThreadLocalTest {
         list.add("4");
 
         list.forEach(p->{
-//            executorService.submit(TtlRunnable.get(() -> {
-//                //abc(子线程中会引起父线程变更)
-//                System.out.println(p+"-"+Thread.currentThread().getName() + ":" + nameThreadLocal.get());
-//                //修改线程变量
-//                nameThreadLocal.set("efg");
-//            }));
-            //不行，要使用上面的
-            executorService.submit(() -> {
+            executorService.submit(TtlRunnable.get(() -> {
                 //abc(子线程中会引起父线程变更)
                 System.out.println(p+"-"+Thread.currentThread().getName() + ":" + nameThreadLocal.get());
                 //修改线程变量
                 nameThreadLocal.set("efg");
-            });
+            }));
+            //不行，要使用上面的
+//            executorService.submit(() -> {
+//                //abc(子线程中会引起父线程变更)
+//                System.out.println(p+"-"+Thread.currentThread().getName() + ":" + nameThreadLocal.get());
+//                //修改线程变量
+//                nameThreadLocal.set("efg");
+//            });
         });
 
         //abc

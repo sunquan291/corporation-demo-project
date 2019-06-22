@@ -3,6 +3,7 @@ package com.zte.sunquan.demo.graph.ql;
 import static graphql.Scalars.GraphQLString;
 import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 
+import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLObjectType;
 //https://blog.csdn.net/z69183787/article/details/79992860
 public class GraphQl {
@@ -13,6 +14,5 @@ public class GraphQl {
 //                        .name("product_number")
 //                        .type(GraphQLString))
 //                .build();
-
     }
 }

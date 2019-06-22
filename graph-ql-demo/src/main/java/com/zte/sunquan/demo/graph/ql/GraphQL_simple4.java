@@ -12,15 +12,19 @@ import java.util.Map;
 import graphql.ExecutionInput;
 import graphql.GraphQL;
 import graphql.Scalars;
+import graphql.TypeResolutionEnvironment;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
+import graphql.schema.TypeResolver;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 
 import com.google.common.collect.Maps;
+import com.zte.sunquan.demo.model2.Cat;
+import com.zte.sunquan.demo.model2.Fish;
 import com.zte.sunquan.demo.model2.User2;
 
 /**
@@ -75,7 +79,9 @@ public class GraphQL_simple4 {
         Map<String, Object> variable = Maps.newHashMap();
         variable.put("iidd", 1);
         ExecutionInput executionInput = ExecutionInput.newExecutionInput().variables(variable).
-                query("query userQuery($iidd:Int){user(id:$iidd){id,age,dogs{id,dogName}}}").build();
+
+                query("query userQuery($iidd:Int){user(id:$iidd){id,age,dogs{id,dogName},animals{__typename ... on Cat{id}}}}").build();
+//        query("query userQuery($iidd:Int){user(id:$iidd){id,age,dogs{id,dogName},animals{... on Cat{__typename ,id}}}}").build();
         Map<String, Object> result = graphQL.execute(executionInput).getData();
         System.out.println(result);
 
@@ -87,6 +93,20 @@ public class GraphQL_simple4 {
     }
 
     private RuntimeWiring buildRuntimeWiring() {
+        TypeResolver t = new TypeResolver() {
+            @Override
+            public GraphQLObjectType getType(TypeResolutionEnvironment env) {
+                Object javaObject = env.getObject();
+                if (javaObject instanceof Cat) {
+                    return env.getSchema().getObjectType("Cat");
+                } else if (javaObject instanceof Fish) {
+                    return env.getSchema().getObjectType("Fish");
+                } else {
+                    return env.getSchema().getObjectType("Cat");
+                }
+            }
+        };
+
         //return RuntimeWiring.newRuntimeWiring().wiringFactory(new EchoingWiringFactory()).build();
         return RuntimeWiring.newRuntimeWiring()
                 // this uses builder function lambda syntax
@@ -98,12 +118,16 @@ public class GraphQL_simple4 {
                             Integer id = environment.getArgument("id");
                             System.out.println("argument:id=" + id);
                             // repository 处理
-                            List<User2> list=new ArrayList<>();
-                            list.add(new User2(1, "sunquan"));
+                            List<User2> list = new ArrayList<>();
+                            User2 user2 = new User2(1, "sunquan");
+                            user2.addAnimal(new Cat(2));
+                            user2.addAnimal(new Fish(3));
+                            list.add(user2);
                             return list;
                         })
 
-                )
+                ).type("Animal", typeWiring -> typeWiring.typeResolver(t))
                 .build();
     }
 }
+

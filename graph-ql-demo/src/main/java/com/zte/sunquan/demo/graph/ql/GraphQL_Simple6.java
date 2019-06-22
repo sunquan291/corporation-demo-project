@@ -7,6 +7,7 @@ import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 import static graphql.schema.GraphQLObjectType.newObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -101,7 +102,7 @@ public class GraphQL_Simple6 {
                 .field(newFieldDefinition().name("sex").type(GraphQLString))
                 .field(newFieldDefinition().name("intro").type(GraphQLString))
                 .field(newFieldDefinition().name("skills").type(new GraphQLList(GraphQLString)))
-                .field(newFieldDefinition().name("hobby").type(new GraphQLList(hobbyType)))
+                .field(newFieldDefinition().name("hobbys").type(new GraphQLList(hobbyType)))
                 .build();
 
         //定义暴露给客户端的查询query api
@@ -120,6 +121,13 @@ public class GraphQL_Simple6 {
                             System.out.println("id=" + id);
                             System.out.println("name=" + name);
                             if (id != null) {
+                                User user = dbUser.get(id);
+                                Hobby hobby=new Hobby();
+                                hobby.setpId(user.getId());
+                                hobby.setId("123");
+                                hobby.setLove("love");
+                                hobby.setName("name123");
+                                user.setHobbys(Lists.newArrayList(hobby));
                                 return dbUser.get(id);
                             }
                             return null;
@@ -146,6 +154,14 @@ public class GraphQL_Simple6 {
                         .dataFetcher(env -> {
                             String name = env.getArgument("name");
                             Map<String, Object> arguments = env.getArguments();
+
+                            for (Map.Entry<String, Object> m : arguments.entrySet()) {
+                                String key = m.getKey();
+                                Object value = m.getValue();
+                                System.out.println("key=" + key + ",value=" + value);
+
+                            }
+
 //                            Predicate<Map<String, Object>> predicate = p -> {
 //                                boolean flag = true;
 //                                for (Map.Entry<String, Object> m : p.entrySet()) {
@@ -211,20 +227,19 @@ public class GraphQL_Simple6 {
         //eg.LTP三层找二层
         result = graphQL.execute("{findUserPrefix(name:\"sun\"){name,sex,intro}}").getData();
         System.out.println("F=" + result);
-        result = graphQL.execute("{findUserfilter(name:\"sun\"){name,sex,intro}}").getData();
+        result = graphQL.execute("{findUserfilter(name:\"sun\",sex:\"boy\"){name,sex,intro}}").getData();
         System.out.println("G=" + result);
 
-//        result = graphQL.execute("{user(name:\"sunquan\"){name,sex,intro}}").getData();
-//        System.out.println(result);
-//        result = graphQL.execute("{users{name,sex,intro}}").getData();
-//        System.out.println(result);
-//        result = graphQL.execute("{user{name,sex,intro},users(page:2,size:5,name:\"john\"){name,sex,intro}}").getData();
-//        System.out.println(result);
-//        System.out.println("----------A---------");
-//        result = graphQL.execute("{user{name,sex,intro,hobby{name}}}").getData();
-//        System.out.println(result);
-//        System.out.println("-----------B--------");
-//        result = graphQL.execute("{hobby{name}}").getData();
-//        System.out.println(result);
+        //想实现的语句查询，是hobby为user的一个属性（按需查询，不需要hobby时不查，不支持）
+        String wantQuery = "query userQuery($userId:String){user(id:$userId){name,sex,intro,hobby(pId:$userId){id,pId,name,love}}}";
+        executionInput = ExecutionInput.newExecutionInput().variables(variable).query(wantQuery).build();
+        result = graphQL.execute(executionInput).getData();
+        System.out.println("H=" + result);
+
+         wantQuery = "query userQuery($userId:String){user(id:$userId){name,sex,intro,hobbys{id,pId,name,love}}}";
+        executionInput = ExecutionInput.newExecutionInput().variables(variable).query(wantQuery).build();
+        result = graphQL.execute(executionInput).getData();
+        System.out.println("I=" + result);
+        
     }
 }
