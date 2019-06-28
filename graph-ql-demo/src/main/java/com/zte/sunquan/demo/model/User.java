@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User {
     private String id;
-    private String sex;
+    private String gender;
     private String name;
     private String intro;
     private String[] skills;

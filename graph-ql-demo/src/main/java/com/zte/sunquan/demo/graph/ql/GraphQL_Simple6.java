@@ -7,7 +7,6 @@ import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 import static graphql.schema.GraphQLObjectType.newObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -38,25 +37,25 @@ public class GraphQL_Simple6 {
         User user1 = new User();
         user1.setId("11");
         user1.setName("wangfei");
-        user1.setSex("boy");
+        user1.setGender("boy");
         user1.setIntro("博主");
 
         User user2 = new User();
         user2.setId("22");
         user2.setName("sunquan2");
-        user2.setSex("boy");
+        user2.setGender("boy");
         user2.setIntro("博主");
 
         User user3 = new User();
         user3.setId("33");
         user3.setName("lisan");
-        user3.setSex("girl");
+        user3.setGender("girl");
         user3.setIntro("博主");
 
         User user4 = new User();
         user4.setId("44");
         user4.setName("sunwaget");
-        user4.setSex("boy");
+        user4.setGender("boy");
         user4.setIntro("博主");
 
 
@@ -99,7 +98,7 @@ public class GraphQL_Simple6 {
                 .name("User")
                 .field(newFieldDefinition().name("id").type(GraphQLString))
                 .field(newFieldDefinition().name("name").type(GraphQLString))
-                .field(newFieldDefinition().name("sex").type(GraphQLString))
+                .field(newFieldDefinition().name("gender").type(GraphQLString))
                 .field(newFieldDefinition().name("intro").type(GraphQLString))
                 .field(newFieldDefinition().name("skills").type(new GraphQLList(GraphQLString)))
                 .field(newFieldDefinition().name("hobbys").type(new GraphQLList(hobbyType)))
@@ -113,7 +112,7 @@ public class GraphQL_Simple6 {
                         .name("user")//该处user表示查询语句唯一标识
                         .argument(newArgument().name("id").type(GraphQLString))
                         .argument(newArgument().name("name").type(GraphQLString))
-                        .argument(newArgument().name("sex").type(GraphQLString))
+                        .argument(newArgument().name("gender").type(GraphQLString))
                         .argument(newArgument().name("intro").type(GraphQLString))
                         .dataFetcher(env -> {
                             String id = env.getArgument("id");
@@ -150,7 +149,7 @@ public class GraphQL_Simple6 {
                         .name("findUserfilter")//该处user表示查询语句唯一标识
                         .argument(newArgument().name("id").type(GraphQLString))
                         .argument(newArgument().name("name").type(GraphQLString))
-                        .argument(newArgument().name("sex").type(GraphQLString))
+                        .argument(newArgument().name("gender").type(GraphQLString))
                         .dataFetcher(env -> {
                             String name = env.getArgument("name");
                             Map<String, Object> arguments = env.getArguments();
@@ -209,34 +208,34 @@ public class GraphQL_Simple6 {
         //模型+接口 组装
         //测试输出
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
-        Map<String, Object> result = graphQL.execute("{user(id:\"11\"){name,sex,intro}}").getData();
+        Map<String, Object> result = graphQL.execute("{user(id:\"11\"){name,gender,intro}}").getData();
         System.out.println("A=" + result);
-        result = graphQL.execute("{users(id:\"11\"){name,sex,intro}}").getData();
+        result = graphQL.execute("{users(id:\"11\"){name,gender,intro}}").getData();
         System.out.println("B=" + result);
         result = graphQL.execute("{hobby(pId:\"11\"){id,pId,name,love}}").getData();
         System.out.println("C=" + result);
-        result = graphQL.execute("{user(id:\"11\"){name,sex,intro},hobby(pId:\"11\"){id,pId,name,love}}").getData();
+        result = graphQL.execute("{user(id:\"11\"){name,gender,intro},hobby(pId:\"11\"){id,pId,name,love}}").getData();
         System.out.println("D=" + result);
 
         Map<String, Object> variable = Maps.newHashMap();
         variable.put("userId", "11");
         ExecutionInput executionInput = ExecutionInput.newExecutionInput().variables(variable).
-                query("query userQuery($userId:String){user(id:$userId){name,sex,intro},hobby(pId:$userId){id,pId,name,love}}").build();
+                query("query userQuery($userId:String){user(id:$userId){name,gender,intro},hobby(pId:$userId){id,pId,name,love}}").build();
         result = graphQL.execute(executionInput).getData();
         System.out.println("E=" + result);
         //eg.LTP三层找二层
-        result = graphQL.execute("{findUserPrefix(name:\"sun\"){name,sex,intro}}").getData();
+        result = graphQL.execute("{findUserPrefix(name:\"sun\"){name,gender,intro}}").getData();
         System.out.println("F=" + result);
-        result = graphQL.execute("{findUserfilter(name:\"sun\",sex:\"boy\"){name,sex,intro}}").getData();
+        result = graphQL.execute("{findUserfilter(name:\"sun\",gender:\"boy\"){name,gender,intro}}").getData();
         System.out.println("G=" + result);
 
         //想实现的语句查询，是hobby为user的一个属性（按需查询，不需要hobby时不查，不支持）
-        String wantQuery = "query userQuery($userId:String){user(id:$userId){name,sex,intro,hobby(pId:$userId){id,pId,name,love}}}";
+        String wantQuery = "query userQuery($userId:String){user(id:$userId){name,gender,intro,hobby(pId:$userId){id,pId,name,love}}}";
         executionInput = ExecutionInput.newExecutionInput().variables(variable).query(wantQuery).build();
         result = graphQL.execute(executionInput).getData();
         System.out.println("H=" + result);
 
-         wantQuery = "query userQuery($userId:String){user(id:$userId){name,sex,intro,hobbys{id,pId,name,love}}}";
+         wantQuery = "query userQuery($userId:String){user(id:$userId){name,gender,intro,hobbys{id,pId,name,love}}}";
         executionInput = ExecutionInput.newExecutionInput().variables(variable).query(wantQuery).build();
         result = graphQL.execute(executionInput).getData();
         System.out.println("I=" + result);

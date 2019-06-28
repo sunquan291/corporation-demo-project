@@ -50,25 +50,25 @@ public class GraphQL_Simple7 {
         User user1 = new User();
         user1.setId("11");
         user1.setName("wangfei");
-        user1.setSex("boy");
+        user1.setGender("boy");
         user1.setIntro("博主");
 
         User user2 = new User();
         user2.setId("22");
         user2.setName("sunquan2");
-        user2.setSex("boy");
+        user2.setGender("boy");
         user2.setIntro("博主");
 
         User user3 = new User();
         user3.setId("33");
         user3.setName("lisan");
-        user3.setSex("girl");
+        user3.setGender("girl");
         user3.setIntro("博主");
 
         User user4 = new User();
         user4.setId("44");
         user4.setName("sunwaget");
-        user4.setSex("boy");
+        user4.setGender("boy");
         user4.setIntro("博主");
 
 
@@ -160,7 +160,7 @@ public class GraphQL_Simple7 {
                 .name("User")
                 .field(newFieldDefinition().name("id").type(GraphQLString))
                 .field(newFieldDefinition().name("name").type(GraphQLString))
-                .field(newFieldDefinition().name("sex").type(GraphQLString))
+                .field(newFieldDefinition().name("gender").type(GraphQLString))
                 .field(newFieldDefinition().name("intro").type(GraphQLString))
                 .field(newFieldDefinition().name("skills").type(new GraphQLList(GraphQLString)))
                 .field(newFieldDefinition().name("hobbys").dataFetcher(e -> {
@@ -179,7 +179,7 @@ public class GraphQL_Simple7 {
                         .name("user")//该处user表示查询语句唯一标识
                         .argument(newArgument().name("id").type(GraphQLString))
                         .argument(newArgument().name("name").type(GraphQLString))
-                        .argument(newArgument().name("sex").type(GraphQLString))
+                        .argument(newArgument().name("gender").type(GraphQLString))
                         .argument(newArgument().name("intro").type(GraphQLString))
                         .dataFetcher(env -> {
                             String id = env.getArgument("id");
@@ -209,7 +209,7 @@ public class GraphQL_Simple7 {
                         .name("findUserfilter")//该处user表示查询语句唯一标识
                         .argument(newArgument().name("id").type(GraphQLString))
                         .argument(newArgument().name("name").type(GraphQLString))
-                        .argument(newArgument().name("sex").type(GraphQLString))
+                        .argument(newArgument().name("gender").type(GraphQLString))
                         .dataFetcher(env -> {
                             String name = env.getArgument("name");
                             Map<String, Object> arguments = env.getArguments();
@@ -299,7 +299,7 @@ public class GraphQL_Simple7 {
         //测试输出
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
 
-        String want = "query userQuery($userId:String){user(id:$userId){name,sex,intro},hobby(pId:$userId){id,pId,name,love},vehicle(userId:$userId){ ... on Car{price}}}";
+        String want = "query userQuery($userId:String){user(id:$userId){name,gender,intro},hobby(pId:$userId){id,pId,name,love},vehicle(userId:$userId){ ... on Car{price}}}";
         Map<String, Object> variable = Maps.newHashMap();
         variable.put("userId", "11");
         ExecutionInput executionInput = ExecutionInput.newExecutionInput().variables(variable).
@@ -308,7 +308,7 @@ public class GraphQL_Simple7 {
         System.out.println("E=" + result);
 
 
-        String wantQuery = "query userQuery($userId:String){user(id:$userId){name,sex,intro,hobbys{id,pId,name,love}}}";
+        String wantQuery = "query userQuery($userId:String){user(id:$userId){name,gender,intro,hobbys{id,pId,name,love}}}";
         executionInput = ExecutionInput.newExecutionInput().variables(variable).
                 query(wantQuery).build();
         result = graphQL.execute(executionInput).getData();

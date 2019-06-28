@@ -33,13 +33,13 @@ public class GraphQL_argument {
         List<User> users = new ArrayList<>();
         User user = new User();
         user.setName("zhaiqianfeng");
-        user.setSex("男");
+        user.setGender("男");
         user.setIntro("博主，专注于Linux,Java,nodeJs,Web前端:Html5,JavaScript,CSS3");
         users.add(user);
 
         user = new User();
         user.setName("zhaiqianfeng");
-        user.setSex("男");
+        user.setGender("男");
         user.setIntro("博主，专注于Linux,Java,nodeJs,Web前端:Html5,JavaScript,CSS3");
         users.add(user);
 
@@ -47,7 +47,7 @@ public class GraphQL_argument {
         GraphQLObjectType userType = newObject()//定义User类型
                 .name("User2")
                 .field(newFieldDefinition().name("name").type(GraphQLString))
-                .field(newFieldDefinition().name("sex").type(GraphQLString))
+                .field(newFieldDefinition().name("gender").type(GraphQLString))
                 .field(newFieldDefinition().name("intro").type(GraphQLString))
                 .field(newFieldDefinition().name("skills").type(new GraphQLList(GraphQLString)))
                 .build();
@@ -55,7 +55,7 @@ public class GraphQL_argument {
         GraphQLInputType userInput = newInputObject()//定于输入类型
                 .name("UserInput")
                 .field(newInputObjectField().name("name").type(GraphQLString))
-                .field(newInputObjectField().name("sex").type(GraphQLString))
+                .field(newInputObjectField().name("gender").type(GraphQLString))
                 .field(newInputObjectField().name("intro").type(GraphQLString))
                 .field(newInputObjectField().name("skills").type(new GraphQLList(GraphQLString)))
                 .build();
@@ -98,8 +98,8 @@ public class GraphQL_argument {
                                     case "name":
                                         userInfo.setName(userInfoMap.get("name").toString());
                                         break;
-                                    case "sex":
-                                        userInfo.setSex(userInfoMap.get("sex").toString());
+                                    case "gender":
+                                        userInfo.setGender(userInfoMap.get("gender").toString());
                                         break;
                                     case "intro":
                                         userInfo.setIntro(userInfoMap.get("intro").toString());
@@ -125,15 +125,15 @@ public class GraphQL_argument {
         //测试输出
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
         //根据Id查询用户
-        Map<String, Object> result = graphQL.execute("{user(id:0){name,sex,intro}}").getData();
+        Map<String, Object> result = graphQL.execute("{user(id:0){name,gender,intro}}").getData();
         System.out.println(result);
 
         //查询用户列表
-        result = graphQL.execute("{users{name,sex,intro}}").getData();
+        result = graphQL.execute("{users{name,gender,intro}}").getData();
         System.out.println(result);
 
         //添加用户列表
-        result = graphQL.execute("mutation{addUserByInput(userInfo:{name:\"test2User\",sex:\"男\",intro:\"简介\",skills:[\"java\",\"nodejs\"]}){name　sex　intro}}").getData();
+        result = graphQL.execute("mutation{addUserByInput(userInfo:{name:\"test2User\",gender:\"男\",intro:\"简介\",skills:[\"java\",\"nodejs\"]}){name　gender　intro}}").getData();
         System.out.println(result);
     }
 }

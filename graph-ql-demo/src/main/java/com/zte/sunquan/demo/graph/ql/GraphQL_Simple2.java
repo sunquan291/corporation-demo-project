@@ -8,7 +8,6 @@ import static graphql.schema.GraphQLInputObjectField.newInputObjectField;
 import static graphql.schema.GraphQLInputObjectType.newInputObject;
 import static graphql.schema.GraphQLObjectType.newObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,18 +35,18 @@ public class GraphQL_Simple2 {
     private static void initDataBase() {
         User user1 = new User();
         user1.setName("wangfei");
-        user1.setSex("boy");
-        user1.setIntro("博主");
+        user1.setGender("boy");
+        user1.setIntro("https://blog.csdn.net/sunquan291");
 
         User user2 = new User();
         user2.setName("sunquan");
-        user2.setSex("boy");
-        user2.setIntro("博主");
+        user2.setGender("boy");
+        user2.setIntro("https://blog.csdn.net/sunquan291");
 
         User user3 = new User();
         user3.setName("lisan");
-        user3.setSex("girl");
-        user3.setIntro("博主");
+        user3.setGender("girl");
+        user3.setIntro("https://blog.csdn.net/sunquan291");
 
         db.put(user1.getName(), user1);
         db.put(user2.getName(), user2);
@@ -62,13 +61,14 @@ public class GraphQL_Simple2 {
         GraphQLObjectType userType = newObject()
                 .name("User2")
                 .field(newFieldDefinition().name("name").type(GraphQLString))
-                .field(newFieldDefinition().name("sex").type(GraphQLString))
+                .field(newFieldDefinition().name("gender").type(GraphQLString))
                 .field(newFieldDefinition().name("intro").type(GraphQLString))
                 .build();
-        GraphQLInputType userInput = newInputObject()//定于输入类型
+        //定义输入类型
+        GraphQLInputType userInput = newInputObject()
                 .name("UserInput")
                 .field(newInputObjectField().name("name").type(GraphQLString))
-                .field(newInputObjectField().name("sex").type(GraphQLString))
+                .field(newInputObjectField().name("gender").type(GraphQLString))
                 .field(newInputObjectField().name("intro").type(GraphQLString))
                 .field(newInputObjectField().name("skills").type(new GraphQLList(GraphQLString)))
                 .build();
@@ -91,19 +91,19 @@ public class GraphQL_Simple2 {
                                 .type(GraphQLString))
                         //.type(new GraphQLNonNull(GraphQLString)))
                         .argument(newArgument()
-                                .name("sex")
+                                .name("gender")
                                 .type(GraphQLString))
                         //.type(new GraphQLNonNull(GraphQLString)))
                         .dataFetcher(environment -> {
                             String name = environment.getArgument("name");
-                            String sex = environment.getArgument("sex");
+                            String sex = environment.getArgument("gender");
                             return db.values().stream().filter(p -> {
                                 boolean flag = true;
                                 if (name != null) {
                                     flag = flag & p.getName().equals(name);
                                 }
                                 if (sex != null) {
-                                    flag = flag & p.getSex().equals(sex);
+                                    flag = flag & p.getGender().equals(sex);
                                 }
                                 return flag;
                             })
@@ -123,7 +123,7 @@ public class GraphQL_Simple2 {
                         .dataFetcher(environment -> {
                             Map<String, Object> userInfoMap = environment.getArgument("userInfo");
 
-                            Gson gson=new Gson();
+                            Gson gson = new Gson();
                             User user = gson.fromJson(userInfoMap.toString(), User.class);
                             db.put(user.getName(), user);
 //                            User userInfo = new User();
@@ -132,8 +132,8 @@ public class GraphQL_Simple2 {
 //                                    case "name":
 //                                        userInfo.setName(userInfoMap.get("name").toString());
 //                                        break;
-//                                    case "sex":
-//                                        userInfo.setSex(userInfoMap.get("sex").toString());
+//                                    case "gender":
+//                                        userInfo.setGender(userInfoMap.get("gender").toString());
 //                                        break;
 //                                    case "intro":
 //                                        userInfo.setIntro(userInfoMap.get("intro").toString());
@@ -178,18 +178,18 @@ public class GraphQL_Simple2 {
 
         //测试输出
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
-        Map<String, Object> result = graphQL.execute("{users{name,sex,intro}}").getData();
+        Map<String, Object> result = graphQL.execute("{users{name,gender,intro}}").getData();
         System.out.println(result);
-        Map<String, Object> result2 = graphQL.execute("{user(name:\"sunquan\"){name,sex,intro}}").getData();
+        Map<String, Object> result2 = graphQL.execute("{user(name:\"sunquan\"){name,gender,intro}}").getData();
         System.out.println(result2);
-        Map<String, Object> result3 = graphQL.execute("{user(name:\"sunquan\",sex:\"boy\"){name,sex,intro}}").getData();
+        Map<String, Object> result3 = graphQL.execute("{user(name:\"sunquan\",gender:\"boy\"){name,gender,intro}}").getData();
         System.out.println(result3);
-        Map<String, Object> result4 = graphQL.execute("{user(sex:\"boy\"){__typename,name,sex,intro}}").getData();
+        Map<String, Object> result4 = graphQL.execute("{user(gender:\"boy\"){__typename,name,gender,intro}}").getData();
         System.out.println(result4);
-        Map<String, Object> result5 = graphQL.execute("{user($first: Int = 1){name,sex,intro}}").getData();
+        Map<String, Object> result5 = graphQL.execute("{user($first: Int = 1){name,gender,intro}}").getData();
         System.out.println("result5:" + result5);
-        result = graphQL.execute("mutation{addUserByInput(userInfo:{name:\"test2User\",sex:\"男\",intro:\"简介\",skills:[\"java\",\"nodejs\"]}){name,sex,intro}}").getData();
-        System.out.println("D:"+result);
+        result = graphQL.execute("mutation{addUserByInput(userInfo:{name:\"test2User\",gender:\"男\",intro:\"简介\",skills:[\"java\",\"nodejs\"]}){name,gender,intro}}").getData();
+        System.out.println("D:" + result);
 
         result = graphQL.execute("mutation{delUserById(name:\"test2User\")}").getData();
         System.out.println(result);
