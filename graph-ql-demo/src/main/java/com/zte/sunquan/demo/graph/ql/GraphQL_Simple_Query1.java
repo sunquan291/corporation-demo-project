@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import graphql.ExecutionInput;
+import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
@@ -109,23 +110,16 @@ public class GraphQL_Simple_Query1 {
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
 
 //        //查询所有user
-//        Map<String, Object> result = graphQL.execute("{users{name,gender,intro}}").getData();
-//        System.out.println("result:" + result);
-//        //查询姓名为sunquan的user
-//        Map<String, Object> result2 = graphQL.execute("{user(name:\"sunquan\"){name,gender,intro}}").getData();
-//        System.out.println("result2:" + result2);
-//        //查询姓名为sunquan,性别为男的user
-//        Map<String, Object> result3 = graphQL.execute("{user(name:\"sunquan\",gender:\"male\"){name,gender,intro}}").getData();
-//        System.out.println("result3:" + result3);
-//        //查询所有男性用户
-//        Map<String, Object> result4 = graphQL.execute("{user(gender:\"male\"){__typename,name,gender,intro}}").getData();
-//        System.out.println("result4:" + result4);
-        Map<String, Object> variable = Maps.newHashMap();
-        variable.put("first", "11");
-        ExecutionInput executionInput = ExecutionInput.newExecutionInput().variables(variable).
-                query("{user(first:1){name,gender,intro}}").build();
-        //查询
-        String resolve = GraphResult.resolve(graphQL.execute(executionInput).toSpecification());
-        System.out.println(resolve);
+        ExecutionResult execute = graphQL.execute("{users{name,gender,intro}}");
+        System.out.println("result1:" + GraphResult.resolve(execute.toSpecification()));
+        //查询姓名为sunquan的user
+        execute = graphQL.execute("{user(name:\"sunquan\"){name,gender,intro}}");
+        System.out.println("result2:" + GraphResult.resolve(execute.toSpecification()));
+        //查询姓名为sunquan,性别为男的user
+        execute = graphQL.execute("{user(name:\"sunquan\",gender:\"male\"){name,gender,intro}}");
+        System.out.println("result3:" + GraphResult.resolve(execute.toSpecification()));
+        //查询所有男性用户
+        execute = graphQL.execute("{user(gender:\"male\"){__typename,name,gender,intro}}");
+        System.out.println("result4:" + GraphResult.resolve(execute.toSpecification()));
     }
 }
