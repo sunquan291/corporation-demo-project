@@ -13,14 +13,14 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.coxautodev.graphql.tools.SchemaParser;
 
 /**
- * GraphQL_simple3 class
+ * GraphQL_SDL class
  *
  * @author 10184538
  * @date 2019/4/4
  */
-public class GraphQL_simple3 {
+public class GraphQL_SDL {
     public static void main(String[] args) {
-        GraphQLSchema schema = SchemaParser.newParser().file("User.graphqls")
+        GraphQLSchema schema = SchemaParser.newParser().file("user.graphqls")
                 .resolvers(new QueryResolver())
                 .dictionary(User.class)
                 .build()

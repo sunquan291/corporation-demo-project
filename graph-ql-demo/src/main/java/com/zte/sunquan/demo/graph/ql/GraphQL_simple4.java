@@ -28,7 +28,7 @@ import com.zte.sunquan.demo.model2.Fish;
 import com.zte.sunquan.demo.model2.User2;
 
 /**
- * GraphQL_simple3 class
+ * GraphQL_SDL class
  *
  * @author 10184538
  * @date 2019/4/4

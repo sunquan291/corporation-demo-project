@@ -1,6 +1,11 @@
-
-
+schema {
+    query: QueryType
+}
+type QueryType
+{
+    filterUser:User
+}
 type User {
-    id: ID
+    id: Int
     name: String
 }
