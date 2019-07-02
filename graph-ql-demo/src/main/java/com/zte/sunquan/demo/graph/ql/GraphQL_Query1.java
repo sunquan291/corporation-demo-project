@@ -27,7 +27,7 @@ import com.zte.sunquan.demo.model.User;
  * <p>
  * blog: www.zhaiqianfeng.com
  */
-public class GraphQL_Simple_Query1 {
+public class GraphQL_Query1 {
     static Map<String, User> db = new HashMap<>();
 
     private static void initDataBase() {

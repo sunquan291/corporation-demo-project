@@ -23,7 +23,7 @@ public class ATest {
     public void test() throws IOException {
         Person person = new Person();
         Zoo zoo = new Zoo();
-        zoo.setAnimals(Lists.newArrayList(new Cat(1), new Fish(2)));
+        zoo.setAnimals(Lists.newArrayList(new Cat(1,"cat1"), new Fish(2)));
         person.setZoo(zoo);
 
         ObjectMapper mapper = new ObjectMapper();

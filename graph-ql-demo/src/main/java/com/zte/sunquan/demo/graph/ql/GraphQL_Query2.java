@@ -22,16 +22,13 @@ import com.zte.sunquan.demo.model.Hobby;
 import com.zte.sunquan.demo.model.User;
 
 /**
- * Created by zhaiqianfeng on 6/7/17.
- * 使用resolver简单演示GraphQL api
- * 定义GrapQL数据类型 -> 定义暴露给客户端的query api和mutaion api -> 创建GraphQL Schema
- * <p>
- * blog: www.zhaiqianfeng.com
+ * @author 10184538
+ * 按需查询
  */
-public class GraphQL_Simple6 {
+public class GraphQL_Query2 {
 
-    static Map<String, User> dbUser = new HashMap<>();
-    static Map<String, Hobby> dbHobby = new HashMap<>();
+    private static Map<String, User> dbUser = new HashMap<>();
+    private static Map<String, Hobby> dbHobby = new HashMap<>();
 
     private static void initDataBase() {
         User user1 = new User();
@@ -121,7 +118,7 @@ public class GraphQL_Simple6 {
                             System.out.println("name=" + name);
                             if (id != null) {
                                 User user = dbUser.get(id);
-                                Hobby hobby=new Hobby();
+                                Hobby hobby = new Hobby();
                                 hobby.setpId(user.getId());
                                 hobby.setId("123");
                                 hobby.setLove("love");
@@ -235,10 +232,10 @@ public class GraphQL_Simple6 {
         result = graphQL.execute(executionInput).getData();
         System.out.println("H=" + result);
 
-         wantQuery = "query userQuery($userId:String){user(id:$userId){name,gender,intro,hobbys{id,pId,name,love}}}";
+        wantQuery = "query userQuery($userId:String){user(id:$userId){name,gender,intro,hobbys{id,pId,name,love}}}";
         executionInput = ExecutionInput.newExecutionInput().variables(variable).query(wantQuery).build();
         result = graphQL.execute(executionInput).getData();
         System.out.println("I=" + result);
-        
+
     }
 }

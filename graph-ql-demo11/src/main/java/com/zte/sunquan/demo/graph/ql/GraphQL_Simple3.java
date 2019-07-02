@@ -1,7 +1,13 @@
 package com.zte.sunquan.demo.graph.ql;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
 import graphql.GraphQL;
+import graphql.execution.AsyncExecutionStrategy;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLSchema;
@@ -11,14 +17,6 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.antlr.v4.runtime.CharStreams;
 import org.springframework.core.io.ClassPathResource;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-
-//import io.reactivex.Single;
-//import io.reactivex.internal.operators.single.SingleJust;
 
 /**
  * GraphQL_Simple3 class
@@ -53,7 +51,7 @@ public class GraphQL_Simple3 {
     }
 
     private String readSchemaFileContent() throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource("User.graphqls");
+        ClassPathResource classPathResource = new ClassPathResource("user.graphqls");
         try (InputStream inputStream = classPathResource.getInputStream()) {
             return CharStreams.fromReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)).toString();
         }
@@ -62,54 +60,10 @@ public class GraphQL_Simple3 {
     public static void main(String[] args) throws IOException {
         GraphQL_Simple3 simple3 = new GraphQL_Simple3();
         GraphQLSchema schema = simple3.graphQLSchema();
-        GraphQL graphQL = GraphQL.newGraphQL(schema).build();
-        Object data = graphQL.execute("{filterUser{id}}").getData();
+        GraphQL graphQL = GraphQL.newGraphQL(schema)
+                .queryExecutionStrategy(new AsyncExecutionStrategy())
+                .build();
+        Object data = graphQL.execute("{filterUser{id,name}}").getData();
         System.out.println(data);
-
-
-//        SchemaParser
-//        GraphQLSchema schema = SchemaParser.newParser().file("User.graphqls")
-//                //.resolvers(new QueryResolver())
-//                .dictionary(User.class)
-//                .build()
-//                .makeExecutableSchema();
-//
-//        GraphQL gql = GraphQL.newGraphQL(schema)
-//                .queryExecutionStrategy(new AsyncExecutionStrategy())
-//                .build();
-//
-//        Map<String, Object> variables = new HashMap<>();
-//        variables.put("limit", 10);
-////        Utils.assertNoGraphQlErrors(gql, variables, new Closure<String>(null) {
-////            @Override
-////            public String call() {
-////                return "query {\n" +
-////                        "   users {\n" +
-////                        "       edges {\n" +
-////                        "           cursor\n" +
-////                        "           node {\n" +
-////                        "               id\n" +
-////                        "               name\n" +
-////                        "           }\n" +
-////                        "       },\n" +
-////                        "       pageInfo {\n" +
-////                        "           hasPreviousPage,\n" +
-////                        "           hasNextPage\n" +
-////                        "           startCursor\n" +
-////                        "           endCursor\n" +
-////                        "       }\n" +
-////                        "   }\n" +
-////                        "}";
-////            }
-////        });
-//    }
-//
-//    static class QueryResolver implements GraphQLQueryResolver {
-//        public Connection<User> users(int first, String after, DataFetchingEnvironment env) {
-//            return new SimpleListConnection<>(Collections.singletonList(new User(1L, "Luke"))).get(env);
-//        }
-//    }
-
-
     }
 }

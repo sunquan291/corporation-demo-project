@@ -13,4 +13,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class Cat implements Animal{
     private int id;
+    private String name;
 }
