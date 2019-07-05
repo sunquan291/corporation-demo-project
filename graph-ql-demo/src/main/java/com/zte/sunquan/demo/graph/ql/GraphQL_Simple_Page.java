@@ -1,22 +1,25 @@
 package com.zte.sunquan.demo.graph.ql;
 
-import static graphql.Scalars.GraphQLString;
-import static graphql.schema.GraphQLArgument.newArgument;
-import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
-import static graphql.schema.GraphQLObjectType.newObject;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Maps;
+import com.zte.sunquan.demo.model.User;
 import graphql.ExecutionInput;
+import graphql.ExecutionResult;
 import graphql.GraphQL;
+import graphql.GraphQLError;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 
-import com.google.common.collect.Maps;
-import com.zte.sunquan.demo.model.User;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static graphql.Scalars.GraphQLInt;
+import static graphql.Scalars.GraphQLString;
+import static graphql.schema.GraphQLArgument.newArgument;
+import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
+import static graphql.schema.GraphQLObjectType.newObject;
 
 /**
  * Created by zhaiqianfeng on 6/7/17.
@@ -79,6 +82,9 @@ public class GraphQL_Simple_Page {
                         .argument(newArgument()
                                 .name("gender")
                                 .type(GraphQLString))
+                        .argument(newArgument()
+                                .name("first")
+                                .type(GraphQLInt))
                         //.type(new GraphQLNonNull(GraphQLString)))
                         .dataFetcher(environment -> {
                             String name = environment.getArgument("name");
@@ -122,8 +128,12 @@ public class GraphQL_Simple_Page {
         Map<String, Object> variable = Maps.newHashMap();
         variable.put("first", "11");
         ExecutionInput executionInput = ExecutionInput.newExecutionInput().variables(variable).
-                query("{user($first: Int = 1){name,gender,intro}}").build();
+                query("query user($first: Int=1 ){user(first:$first){name,gender,intro}}").build();
         //查询
+        ExecutionResult execute = graphQL.execute(executionInput);
+        List<GraphQLError> errors =
+                execute.getErrors();
+        System.out.println(errors);
         Map<String, Object> result5 = graphQL.execute(executionInput).getData();
         System.out.println("result5:" + result5);
     }

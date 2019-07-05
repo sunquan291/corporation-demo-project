@@ -40,7 +40,7 @@ import com.zte.sunquan.demo.model.Vehicle;
  * <p>
  * blog: www.zhaiqianfeng.com
  */
-public class GraphQL_Simple7 {
+public class GraphQL_Interface {
 
     static Map<String, User> dbUser = new HashMap<>();
     static Map<String, Hobby> dbHobby = new HashMap<>();
@@ -148,7 +148,6 @@ public class GraphQL_Simple7 {
     public static void main(String[] args) {
         initDataBase();
         //定义GraphQL类型
-
         GraphQLObjectType hobbyType = newObject()
                 .name("Hobby")
                 .field(newFieldDefinition().name("id").type(GraphQLString))
@@ -164,13 +163,12 @@ public class GraphQL_Simple7 {
                 .field(newFieldDefinition().name("intro").type(GraphQLString))
                 .field(newFieldDefinition().name("skills").type(new GraphQLList(GraphQLString)))
                 .field(newFieldDefinition().name("hobbys").dataFetcher(e -> {
+                    //按需获取
                     User source = e.getSource();
                     return dbHobby.values().stream().filter(h -> h.getpId().equals(source.getId()))
                             .collect(Collectors.toList());
                 }).type(new GraphQLList(hobbyType)))
                 .build();
-
-
         //定义暴露给客户端的查询query api
         GraphQLObjectType queryType = newObject()
                 .name("userQuery")
@@ -220,17 +218,6 @@ public class GraphQL_Simple7 {
                                 System.out.println("key=" + key + ",value=" + value);
 
                             }
-
-//                            Predicate<Map<String, Object>> predicate = p -> {
-//                                boolean flag = true;
-//                                for (Map.Entry<String, Object> m : p.entrySet()) {
-//                                    String key = m.getKey();
-//                                    Object value = m.getValue();
-//
-//                                }
-//                                return true;
-//                            };
-
                             System.out.println("name=" + name);
                             if (name != null) {
                                 return dbUser.values().stream().filter(p -> p.getName().startsWith(name))
@@ -290,7 +277,6 @@ public class GraphQL_Simple7 {
         types.add(carType);
         types.add(busType);
 
-
         //创建Schema
         GraphQLSchema schema = GraphQLSchema.newSchema()
                 .query(queryType)
@@ -307,7 +293,7 @@ public class GraphQL_Simple7 {
         Map<String, Object> result = graphQL.execute(executionInput).getData();
         System.out.println("E=" + result);
 
-
+        //hobby实现了按需查询
         String wantQuery = "query userQuery($userId:String){user(id:$userId){name,gender,intro,hobbys{id,pId,name,love}}}";
         executionInput = ExecutionInput.newExecutionInput().variables(variable).
                 query(wantQuery).build();
