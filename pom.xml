@@ -24,6 +24,9 @@
         <module>graph-ql-spring</module>
         <module>graph-ql-demo11</module>
         <module>framework-handler</module>
+        <module>spi-demo</module>
+        <module>spi-demo-interface</module>
+        <module>spi-demo-impl</module>
     </modules>
     <dependencies>
         <dependency>

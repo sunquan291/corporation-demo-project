@@ -1,11 +1,23 @@
 schema {
-    query: QueryType
+    query: QueryUser
 }
-type QueryType
+type QueryUser
 {
-    filterUser:User
+    filterUser(key:String,value:String,offset:Int,limit:Int):[User]
 }
 type User {
-    id: Int
+    id: String
     name: String
+    gender:String
+    vehicle:Vehicle
+
+}
+union Vehicle = Car | Bus
+
+type Car{
+    price:Float
+}
+type Bus{
+    price:Float
+    seats:Int
 }

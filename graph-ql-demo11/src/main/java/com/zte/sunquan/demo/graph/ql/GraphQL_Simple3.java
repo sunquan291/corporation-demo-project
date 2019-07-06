@@ -18,6 +18,10 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import org.antlr.v4.runtime.CharStreams;
 import org.springframework.core.io.ClassPathResource;
 
+import com.google.common.collect.Lists;
+import com.zte.sunquan.demo.graph.domain.User;
+import com.zte.sunquan.demo.graph.utils.GraphQLUtil;
+
 /**
  * GraphQL_Simple3 class
  *
@@ -29,12 +33,16 @@ public class GraphQL_Simple3 {
 
     private RuntimeWiring buildRuntimeWiring() {
         return RuntimeWiring.newRuntimeWiring()
-                .type("QueryType",
+                .type("Vehicle", typeWiring -> typeWiring.typeResolver(GraphQLUtil.getTypeResolverOfVehicle()))
+                .type("QueryUser",
                         typeWiring -> typeWiring
                                 .dataFetcher("filterUser", new DataFetcher() {
                                     @Override
                                     public Object get(DataFetchingEnvironment environment) {
-                                        return new User(1, "sunquan");
+                                        User user = new User();
+                                        user.setId("1");
+                                        user.setName("sunquan");
+                                        return Lists.newArrayList(user);
                                     }
                                 })
                 ).build();
@@ -63,7 +71,7 @@ public class GraphQL_Simple3 {
         GraphQL graphQL = GraphQL.newGraphQL(schema)
                 .queryExecutionStrategy(new AsyncExecutionStrategy())
                 .build();
-        Object data = graphQL.execute("{filterUser{id,name}}").getData();
+        Object data = graphQL.execute("query QueryUser{filterUser{id,name}}").getData();
         System.out.println(data);
     }
 }
