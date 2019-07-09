@@ -20,7 +20,7 @@ import com.zte.sunquan.demo.model.User;
  * <p>
  * blog: www.zhaiqianfeng.com
  */
-public class GraphQL_Simple {
+public class GraphQL_Directives_Fragment {
 
     public static void main(String[] args) {
         //服务端示例数据
@@ -53,9 +53,9 @@ public class GraphQL_Simple {
                 .build();
         //测试输出
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
-        Map<String, Object> result = graphQL.execute("{user{name,gender,intro}}").getData();
-        System.out.println(result);
-        result = graphQL.execute("{__schema{types{name}}}").getData();
+
+        String fragment = "fragment userFields on User2{name,gender}";
+        Map<String, Object> result = graphQL.execute("{user{...userFields,intro}}" + fragment).getData();
         System.out.println(result);
     }
 }

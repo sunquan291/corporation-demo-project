@@ -16,7 +16,7 @@ id: Int
 union Animal=Cat | Fish
 type User2 {
 id: Int
-age: Int
+age: Int! @default(value: 0)
 userName: String!
 dogs: [Dog]
 animals:[Animal]

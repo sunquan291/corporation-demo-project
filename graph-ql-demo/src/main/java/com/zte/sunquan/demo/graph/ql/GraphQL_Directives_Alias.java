@@ -20,7 +20,7 @@ import com.zte.sunquan.demo.model.User;
  * <p>
  * blog: www.zhaiqianfeng.com
  */
-public class GraphQL_Simple {
+public class GraphQL_Directives_Alias {
 
     public static void main(String[] args) {
         //服务端示例数据
@@ -53,9 +53,10 @@ public class GraphQL_Simple {
                 .build();
         //测试输出
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
-        Map<String, Object> result = graphQL.execute("{user{name,gender,intro}}").getData();
+        //为name起别名userName
+        Map<String, Object> result = graphQL.execute("{user{userName:name,gender,intro}}").getData();
         System.out.println(result);
-        result = graphQL.execute("{__schema{types{name}}}").getData();
+        result = graphQL.execute("{employee:user{userName:name,gender,intro}}").getData();
         System.out.println(result);
     }
 }

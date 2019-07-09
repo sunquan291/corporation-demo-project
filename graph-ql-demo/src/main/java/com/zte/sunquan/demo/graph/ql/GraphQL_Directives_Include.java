@@ -1,15 +1,19 @@
 package com.zte.sunquan.demo.graph.ql;
 
+import static graphql.Scalars.GraphQLBoolean;
 import static graphql.Scalars.GraphQLString;
+import static graphql.schema.GraphQLArgument.newArgument;
 import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 import static graphql.schema.GraphQLObjectType.newObject;
 
 import java.util.Map;
 
+import graphql.ExecutionInput;
 import graphql.GraphQL;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 
+import com.google.common.collect.Maps;
 import com.zte.sunquan.demo.model.User;
 
 /**
@@ -20,7 +24,7 @@ import com.zte.sunquan.demo.model.User;
  * <p>
  * blog: www.zhaiqianfeng.com
  */
-public class GraphQL_Simple {
+public class GraphQL_Directives_Include {
 
     public static void main(String[] args) {
         //服务端示例数据
@@ -41,6 +45,8 @@ public class GraphQL_Simple {
         GraphQLObjectType queryType = newObject()
                 .name("userQuery")
                 .field(newFieldDefinition().type(userType).name("user")
+                        .argument(newArgument().name("show").type(GraphQLBoolean).defaultValue(false)
+                        )
                         .dataFetcher(env -> {
                             return user;
                         }))
@@ -53,9 +59,15 @@ public class GraphQL_Simple {
                 .build();
         //测试输出
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
-        Map<String, Object> result = graphQL.execute("{user{name,gender,intro}}").getData();
+        Map<String, Object> result = graphQL.execute("{user{name @include(if: true),gender,intro}}").getData();
         System.out.println(result);
-        result = graphQL.execute("{__schema{types{name}}}").getData();
+        Map<String, Object> variable = Maps.newHashMap();
+        variable.put("show", Boolean.FALSE);
+        ExecutionInput executionInput = ExecutionInput.newExecutionInput().variables(variable)
+                .query("query userQuery($show:Boolean!){user{name @include(if: $show),gender,intro}}").build();
+        result = graphQL.execute(executionInput).getData();
+        System.out.println(result);
+        result = graphQL.execute("{__type(name:\"User2\"){name,fields{name,type{name}}}}").getData();
         System.out.println(result);
     }
 }
