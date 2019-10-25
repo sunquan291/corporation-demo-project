@@ -27,6 +27,7 @@
         <module>spi-demo</module>
         <module>spi-demo-interface</module>
         <module>spi-demo-impl</module>
+        <module>thread-loacal-demo</module>
     </modules>
     <dependencies>
         <dependency>
