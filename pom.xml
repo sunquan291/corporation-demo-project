@@ -28,6 +28,7 @@
         <module>spi-demo-interface</module>
         <module>spi-demo-impl</module>
         <module>thread-loacal-demo</module>
+        <module>batch-commit</module>
     </modules>
     <dependencies>
         <dependency>
