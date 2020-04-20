@@ -30,6 +30,8 @@
         <module>thread-loacal-demo</module>
         <module>batch-commit</module>
         <module>fms-demo</module>
+        <module>jvm-demo</module>
+        <module>demo-spring-v1</module>
     </modules>
     <dependencyManagement>
         <dependencies>
