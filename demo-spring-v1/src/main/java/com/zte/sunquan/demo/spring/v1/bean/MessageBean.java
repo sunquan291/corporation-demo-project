@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * @author sunquan
  */
 @Component("myBean")
-@ComponentScan
+//@ComponentScan
 public class MessageBean {
     @Value("abc")
     private String msg;
