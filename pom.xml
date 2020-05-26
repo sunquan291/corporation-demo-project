@@ -34,6 +34,7 @@
         <module>demo-spring-v1</module>
         <module>demo-spring-v2</module>
         <module>demo-spring-v3</module>
+        <module>netty-demo</module>
     </modules>
     <dependencyManagement>
         <dependencies>
