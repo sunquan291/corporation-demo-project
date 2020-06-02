@@ -17,9 +17,9 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/oscp_test"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/oscp_test?serverTimezone=UTC"/>
                 <property name="username" value="root"/>
-                <property name="password" value="123456"/>
+                <property name="password" value="root"/>
             </dataSource>
         </environment>
     </environments>

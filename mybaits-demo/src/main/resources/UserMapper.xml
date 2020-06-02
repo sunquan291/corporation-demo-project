@@ -13,8 +13,7 @@
     <select id="getAllUser" resultMap="userResultMap">
         select * from user
     </select>
-    <insert id="addUser" parameterType="User" keyProperty="id"
-            useGeneratedKeys="true">
-        insert into user (_name,age) values (#{name},#{age});
+    <insert id="addUser" parameterType="User" keyProperty="id" useGeneratedKeys="true">
+        insert into user (id,_name,age) values (#{id,jdbcType=INTEGER},#{name},#{age});
     </insert>
 </mapper>
