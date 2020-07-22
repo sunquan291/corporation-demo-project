@@ -35,6 +35,7 @@
         <module>demo-spring-v2</module>
         <module>demo-spring-v3</module>
         <module>netty-demo</module>
+        <module>springboot-mybatis</module>
     </modules>
     <dependencyManagement>
         <dependencies>
