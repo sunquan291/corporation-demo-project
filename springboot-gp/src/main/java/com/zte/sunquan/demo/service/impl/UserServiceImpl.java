@@ -1,7 +1,7 @@
 package com.zte.sunquan.demo.service.impl;
 
 import com.zte.sunquan.demo.bean.User;
-import com.zte.sunquan.demo.dao.UserDao;
+import com.zte.sunquan.demo.dao.UserMapper;
 import com.zte.sunquan.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    private UserDao userDao;
+    private UserMapper userMapper;
 
     @Override
     public void addUser(User user) {
-        userDao.addUser(user);
+        userMapper.addUser(user);
     }
 }

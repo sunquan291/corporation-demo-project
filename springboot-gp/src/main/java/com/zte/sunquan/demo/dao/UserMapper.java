@@ -8,6 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @Date: 2020/7/17 23:22
  */
 @Mapper
-public interface UserDao {
+public interface UserMapper {
     void addUser(User user);
 }
