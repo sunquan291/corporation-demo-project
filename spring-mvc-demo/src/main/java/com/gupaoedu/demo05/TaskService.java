@@ -15,6 +15,6 @@ public class TaskService {
 
     @Scheduled(fixedRate = 3000)
     public void reportCurrentTime(){
-        System.out.println("current Time:"+new Date());
+        System.out.println("current Time:"+Thread.currentThread().getName()+new Date());
     }
 }
