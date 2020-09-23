@@ -1,17 +1,15 @@
 package com.zte.sunquan.spring;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.zte.sunquan.spring.bean.Book;
 import com.zte.sunquan.spring.dao.ReadingListRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * ReadingListController class
@@ -29,6 +27,11 @@ import com.zte.sunquan.spring.dao.ReadingListRepository;
 //@ResponseBody
 public class ReadingListController {
     private ReadingListRepository readingListRepository;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Value("${server.port}")
+    private String serverPort;
 
     @Autowired
     public ReadingListController(ReadingListRepository readingListRepository) {
@@ -50,5 +53,12 @@ public class ReadingListController {
         book.setReader(reader);
         readingListRepository.save(book);
         return "redirect:/readingList/{reader}";
+    }
+
+    @GetMapping("order/by-user/{id}")
+    @ResponseBody
+    public String getOrderByUser(@PathVariable("id") String id) {
+        System.out.println("port:"+serverPort);
+        return "order:" + id;
     }
 }

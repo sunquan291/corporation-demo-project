@@ -36,6 +36,7 @@
         <module>demo-spring-v3</module>
         <module>netty-demo</module>
         <module>springboot-mybatis</module>
+        <module>zookeeper-test</module>
     </modules>
     <dependencyManagement>
         <dependencies>
