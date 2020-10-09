@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "sq.host",
+      "type": "java.lang.String",
+      "description": "",
+      "defaultValue": "localhost"
+    }
+  ]
+}
