@@ -11,7 +11,7 @@
 
     <artifactId>jesery-demo</artifactId>
     <properties>
-        <jetty.version>9.3.8.v20160314</jetty.version>
+        <jetty.version>9.4.41.v20210516</jetty.version>
         <jersey.version>2.8</jersey.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
